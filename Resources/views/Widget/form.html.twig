@@ -1,0 +1,41 @@
+{% extends 'BRSCoreBundle:Widget:base.html.twig' %}
+{% block class %}form-widget{% endblock %}
+{% block widget %}
+<div class="widget-header">
+	<h2>{{ name | trans }}:</h2>
+</div>
+
+<div class="form wrapper">
+
+	<form id="{{route}}_{{name}}_form" name="{{route}}_{{name}}_form" class="jive-form" action="{% if action is defined %}{{ action }}{% endif %}" method="post" {{ form_enctype(form) }}>
+		
+		<div class="fields">
+		   {% include 'BRSCoreBundle:Widget:form/fields.html.twig' %}
+	    </div>
+	    
+	    {{ form_rest(form) }}
+	    
+	    {% if actions is defined %}
+	    	<div class="actions wrapper">
+		    	{% for key, field in actions %}
+		    		{% include 'BRSCoreBundle:Widget:fields/' ~ field.type ~ '.html.twig' %}
+		    	{% endfor %}
+	    	</div>
+	    {% endif %}
+	    
+	</form>
+	
+</div>
+
+<script type="text/javascript">
+	
+	var form = new {% if widget_class == 'SearchFormWidget'%}SearchFormWidget{% else %}EditFormWidget{% endif %}({
+		id:'{{route}}_{{name}}_form',
+		name:'{{ name }}', 
+		route:'{{ route }}',
+		action:'{{ path(route, { 'name':name, 'route':'post' }) }}{% if entity_id is defined %}?id={{ entity_id }}{% endif %}'
+	});
+	
+</script> 
+
+{% endblock %}

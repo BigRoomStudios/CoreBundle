@@ -1,0 +1,32 @@
+{% for item in list %}
+	
+	{% set is_selected = false %}
+	{% if selected[item.id] is defined %}
+		{% if selected[item.id] %}
+			{% set is_selected = true %}
+		{% endif %}
+	{% else %}
+		{% if select_all %}
+			{% set is_selected = true %}
+		{% endif %}
+	{% endif %}
+	
+	<tr class="row-{{ item.id }} {% if is_selected %}selected{% endif %}">
+		{% if selectable %}
+			<td class="select" style="width:25px;">
+				<input type="hidden" name="selected[{{ item.id }}]" value=0 />
+				<input type="checkbox" class="select" data-id="{{ item.id }}" name="selected[{{ item.id }}]" {% if is_selected %}checked=1{% endif %} value=1 />
+			</td>
+		{% endif %}
+		{% for key, field in list_fields %}
+			<td style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}"><div>
+				{% if field.type is defined %}
+					{% include 'BRSCoreBundle:Widget:fields/' ~ field.type ~ '.html.twig' %}
+				{% else %}
+					{{ item[key] }}
+				{% endif %}
+			</div></td>
+		{% endfor %}
+	</tr>
+	
+{% endfor %}

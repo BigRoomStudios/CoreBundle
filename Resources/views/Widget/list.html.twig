@@ -1,0 +1,57 @@
+{% extends 'BRSCoreBundle:Widget:base.html.twig' %}
+{% block class %}list-widget{% endblock %}
+{% block prewidget %}
+{% if search_widget is defined %}<div class="pre-widget">{{ search_widget | raw }}</div>{% endif %}
+{% endblock %}
+{% block widget %}
+<form id="{{route}}_{{name}}_form" name="{{route}}_{{name}}_form" action="{{ path(route, { 'name':name, 'route':'post' }) }}" method="post">
+	<div class="widget-header">
+		<h2>{{ name | trans }}:</h2>
+		<div class="paging">
+			Found: <span class="total">{{ total }}</span>
+			Page: <span class="current-page">{{ page }}</span> of <span class="page-count">{{ pages }}</span>
+			Go to page: 
+			<span class="pages">
+				{% for i in 1..pages %}
+					<a class="page" href="?{{ name }}[page]={{ i }}">{{ i }}</a>
+				{% endfor %}
+			</span>
+		</div>
+	</div>
+	<div class="list">
+		<div class="list-actions wrapper">
+			<button class="list-action" name="select_all" data-route="{{ path(route, { 'name':name, 'route':'select_all' }) }}">{{ 'Select All' | trans }}</button>
+			<button class="list-action" name="select_none" data-route="{{ path(route, { 'name':name, 'route':'select_none' }) }}">{{ 'Select None' | trans }}</button>
+			<button class="list-action" name="delete_selected" data-route="{{ path(route, { 'name':name, 'route':'delete_selected' }) }}">{{ 'Delete' | trans }}</button>
+		</div>
+		<table>
+			<thead>
+				{% if selectable %}
+					<th class="select" style="width:25px;"></th>
+				{% endif %}
+				{% for key, field in list_fields %}
+					<th style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}" {% if field.nonentity is not defined %} class="{% if order_by == key %}selected{% endif %}" data-field="{{ key }}"{% endif %}>{% if field.nonentity is not defined %}<a href="?{{ name }}[order]={{ key }}">{{ key | trans }}</a>{% endif %}</th>
+				{% endfor %}
+			</thead>
+			<tbody>
+				{% include 'BRSCoreBundle:Widget:list/rows.html.twig' %}
+			</tbody>
+		</table>
+	</div>
+</form>
+{% endblock %}
+{% block widget_js %}
+<script language="JavaScript">
+	
+	var list = new ListWidget({
+		name:'{{ name }}', 
+		route:'{{ route }}', 
+		action:'{{ path(route, { 'name':name, 'route':'' }) }}',
+		total: {{ total }},
+		page: {{ page }},
+		pages: {{ pages }},
+		page_size: {{ page_size }},
+	});
+	
+</script>
+{% endblock %}

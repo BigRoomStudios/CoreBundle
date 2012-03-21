@@ -1,0 +1,7 @@
+{% set params = {} %}
+
+{% for param in field.route.params %}
+	{% set params = update(params, param, item[param]) %}
+{% endfor %}
+
+<a data-route="{{ field.route.name }}" href="{{ path(field.route.name, params) }}">{{ field.label | trans }}</a>

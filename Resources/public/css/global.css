@@ -1,0 +1,56 @@
+/* Global Styles */
+
+html {
+
+}
+
+body {	
+	background:#FFF;
+	font-size: .8em;
+	font-family:Arial;
+}
+
+img {
+	border:0;
+}
+
+ul, li, body, html, h1, h2, h3, h4,h5, p, a, dl, dt, form {
+	margin: 0;
+	padding: 0;
+}
+
+a {
+	outline:none;
+}
+
+a:hover {
+	cursor:pointer;
+	outline:none;
+}
+
+/* Wrapper Styles */
+
+/* IE 7 Wrapper */
+ * .wrapper{
+	min-height: 1%;
+}
+
+/* Global Wrapper  */
+.wrapper:after{
+	clear: both;
+	content: ".";
+	display: block;
+	height: 0;
+	visibility: hidden;
+}
+
+.hidden{
+	display: none;
+}
+
+/* Print CSS */
+
+@media print {
+	body, a { color: #000000; background: #FFFFFF; } /* all text colors black, all backgrounds white */
+	#nav-level-2 { visibility:hidden; }
+}

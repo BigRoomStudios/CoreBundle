@@ -1,0 +1,15 @@
+/* Fonts
+
+// Example
+
+@font-face { 
+	font-family: LOCAL NAME TO USE; 
+	src: url('PATH TO FONT'); 
+	src: local('LOCAL NAME TO USE'), url(PATH TO FONT) format("truetype"); 
+}
+
+*/
+
+body {	
+	-webkit-font-smoothing: subpixel-antialiased;
+}

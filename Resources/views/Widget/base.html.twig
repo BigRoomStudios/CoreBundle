@@ -1,0 +1,10 @@
+{% block prewidget %}
+{% endblock %}
+<div class="{% block class %}{% endblock %} {{ class }} widget" id="{{ route }}_{{ name }}">
+{% block widget %}
+{% endblock %}
+</div>
+{% block widget_js %}
+{% endblock %}
+{% block postwidget %}
+{% endblock %}

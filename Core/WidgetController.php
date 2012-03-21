@@ -1,0 +1,186 @@
+<?php
+
+namespace BRS\CoreBundle\Core;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
+
+/**
+ * WidgetController
+ */
+class WidgetController extends Controller
+{
+	
+	protected $route_name;
+	protected $entity;
+	protected $entity_name;
+	protected $widgets = array();
+	protected $widget_factory;
+	protected $views = array();
+	protected $view;
+	
+	/**
+	 * Passes widget routes on to widget controllers
+	 *
+	 * @Route("/widget/{name}/{route}", requirements={"route" = ".*"})
+	 * @Template("BRSCoreBundle:Admin:modules.html.twig")
+	 */
+	public function widgetAction($name, $route = 'render')
+	{
+		$widget = $this->getWidget($name);
+					
+		if($widget){
+			
+			$return = $widget->route($route);
+			
+			return $return;
+			
+			//return $return;
+		}else{
+			
+			throw new \Exception('No registered widget with that name: ' . $name);
+		}
+			
+	}
+	
+	public function setContainer(ContainerInterface $container = null){
+				
+		parent::setContainer($container);
+		
+		$this->widget_factory = $this->get('widget_factory');
+		
+		$this->widget_factory->setContainer($container);
+		
+		$this->setup();
+	}
+	
+	protected function setup(){
+		
+		
+	}
+	
+	protected function addWidget($widget, $name){
+		
+		$widget = $this->buildWidget($widget, $name);
+		
+		$this->registerWidget($widget);
+	}
+	
+	protected function buildWidget($widget, $name){
+		
+		$widget = $this->widget_factory->buildWidget($widget, $name);
+		
+		$widget->setEntityName($this->entity_name);
+		
+		$widget->setRouteName($this->getRouteName() . '_widget');
+		
+		$widget->setEntity($this->getEntity());
+		
+		return $widget;
+	}
+	
+	protected function registerWidget($widget)
+	{
+		$name = $widget->getName();
+		
+		$this->widgets[$name] = $widget;
+	}
+	
+	protected function getWidget($name)
+	{
+		if(isset($this->widgets[$name])){
+		
+			return $this->widgets[$name];
+		}
+	}
+	
+	protected function setView($name)
+	{
+		$this->view = $name;
+	}
+	
+	protected function addView($name, $widget)
+	{
+		$this->views[$name] = $widget;
+	}
+	
+	protected function getView($name)
+	{
+		return $this->views[$name];
+	}
+	
+	protected function setRouteName($route_name)
+	{
+		$this->route_name = $route_name;
+	}
+	
+	protected function getRouteName()
+	{
+		return $this->route_name;
+	}
+	
+	/**
+     * Sets the doctrine entity name of the primary object
+     *
+     * @param string  $entity_name       The name of the entity
+     */
+	public function setEntityName($entity_name)
+	{	
+		$this->entity_name = $entity_name;
+	}
+	
+	public function setEntity($entity)
+	{
+		$this->entity = $entity;
+	}
+	
+	public function &getEntity()
+	{
+		return $this->entity;
+	}
+	
+	/**
+     * Get a doctrine repository for a given repository defaults to the primary entity
+	 * 
+     * @param string  $entity_name       The name of the entity
+     * @return array The list fields
+     */
+	public function getRepository($entity_name = null)
+	{		
+		$em = $this->getDoctrine()->getEntityManager();
+		
+		if($entity_name){
+	
+       		return $em->getRepository($entity_name);
+			
+		}else{
+		
+			return $em->getRepository($this->entity_name);
+		}
+	}
+	
+	protected function isAjax(){
+		
+		$request = $this->getRequest();
+		
+		if ($request->getMethod() == 'GET') {
+			
+			if($request->query->get('ajax')){
+				
+				return true;
+			}			
+	    }
+	}
+	
+	protected function jsonResponse($values){
+		
+		return new Response(json_encode($values));
+	}
+}

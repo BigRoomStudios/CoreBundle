@@ -1,0 +1,11 @@
+{% if field.type == 'group'%}
+	<div class="form-group wrapper">
+		{% include 'BRSCoreBundle:Widget:form/fields.html.twig' with {'fields' : field.fields} %}
+	</div>
+{% else %}
+	<div class="field">
+	    {{ form_label(form[key]) }}
+	    {{ form_errors(form[key]) }}
+	    {{ form_widget(form[key]) }}
+	</div>
+{% endif %}
