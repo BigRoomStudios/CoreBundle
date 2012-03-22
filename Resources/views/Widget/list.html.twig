@@ -30,7 +30,7 @@
 					<th class="select" style="width:25px;"></th>
 				{% endif %}
 				{% for key, field in list_fields %}
-					<th style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}" {% if field.nonentity is not defined %} class="{% if order_by == key %}selected{% endif %}" data-field="{{ key }}"{% endif %}>{% if field.nonentity is not defined %}<a href="?{{ name }}[order]={{ key }}">{{ key | trans }}</a>{% endif %}</th>
+					<th style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}" {% if field.nonentity is not defined %} class="{% if order_by == key %}selected{% endif %}" data-field="{{ key }}"{% endif %}>{% if field.nonentity is not defined %}<a href="?{{ name }}[order]={{ key }}">{{ key | trans | title }}</a>{% endif %}</th>
 				{% endfor %}
 			</thead>
 			<tbody>
