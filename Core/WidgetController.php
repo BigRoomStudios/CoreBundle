@@ -14,6 +14,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * WidgetController
+ * base controller for handling a collection of "views", each view containing a collection of "widgets"
+ * each widget acts as a micro MVC system within the "page" created by a WidgetController
  */
 class WidgetController extends Controller
 {
