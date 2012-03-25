@@ -2,6 +2,8 @@
 	<div class="form-group wrapper">
 		{% include 'BRSCoreBundle:Widget:form/fields.html.twig' with {'fields' : field.fields} %}
 	</div>
+{% elseif field.type == 'hidden' %}
+	{{ form_widget(form[key]) }}
 {% else %}
 	<div class="field">
 	    {{ form_label(form[key]) }}

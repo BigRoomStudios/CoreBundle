@@ -13,7 +13,8 @@ var EditFormWidget = Class.create({
 		this.widget_name = config.name;
 		this.widget_route = config.route;
 		this.id = config.id;
-		this.container = $(this.id);
+		this.entity_id = config.entity_id;
+		this.container = $('#'+this.id);
 		
 		// create jive form
 		this.form = new JiveForm({
@@ -22,27 +23,42 @@ var EditFormWidget = Class.create({
 		});
 			
 		// set custom form callbacks
-		this.form.success(this.post);
-		this.form.failure(this.failure);
+		this.form.success(function(){
+			$this.post();
+		});
 		
+		this.form.failure(function(){
+			$this.failure();
+		});
+		
+		$j.widgets[this.id] = this;
 	},
 	
 	// posts data to a controller on successful form validation
 	post: function(){
-				
+		
+		var $this = this;
+		
 		// remove all error blurbs
 		$('.blurb-error').remove();
 		
 		$j.messenger.clear();
 		
 		// set data to send
-		var data = this.serializeArray();
+		var data = this.form.serializeArray();
 			
 		data.push({name:'ajax', value:'true'});
 		
+		var action = this.config.action;
+		
+		if(this.entity_id){
+			
+			action += '?id=' + this.entity_id;
+		}
+		
 		// send it to controller
 		$.post(
-			this.config.action, // pulls from form config 
+			action, 
 			data,
 			function(data){
 				
@@ -55,8 +71,11 @@ var EditFormWidget = Class.create({
 					    content:"<p><b>Success!</b> Your item was updated.</p>" // should come from server
 					});
 		    	
-		    		// redirect me to the success rout
-		    		$j.nav.go(data.redirect.route, data.redirect.url);
+		    		// redirect me to the success route
+		    		if(data.redirect && data.redirect.url && data.redirect.route){
+		    			
+		    			$j.nav.go(data.redirect.route, data.redirect.url);
+		    		}
 		    		
 		    	} else {
 		    		

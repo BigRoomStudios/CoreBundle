@@ -7,4 +7,4 @@
 	{% endfor %}
 	
 {% endif %}
-<button class="button {% if field.class is defined %}{{ field.class }}{% endif %}" name="{{ key }}" value="1" {% if field.route is defined %}data-route="{{ field.route.name }}" data-href="{{ path(field.route.name, params) }}"{% endif %}>{{ key | trans | title }}</button>
+<button class="button {% if field.class is defined %}{{ field.class }}{% endif %} button-{{ key }}" name="{{ key }}" value="1" {% if field.route is defined %}data-route="{{ field.route.name }}" data-href="{{ path(field.route.name, params) }}"{% endif %}>{{ key | trans | title }}</button>

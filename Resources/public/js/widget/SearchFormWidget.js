@@ -21,7 +21,8 @@ var SearchFormWidget = Class.create({
 		this.form.success(this.post);
 		
 		this.form.failure(this.failure);
-	
+		
+		$j.widgets[this.id] = this;
 	},
 	
 	post: function(){

@@ -4,6 +4,9 @@ namespace BRS\CoreBundle\Core\Widget;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\Event;
+
+use BRS\CoreBundle\Core\Utility;
 
 /**
  * editFormWidget defines a basic form for manipulating entity data
@@ -24,31 +27,18 @@ class EditFormWidget extends FormWidget
 	
 	public function &getForm()
 	{
-		//if(!isset($this->form)){
+		$entity =& $this->getEntity();
+		
+		$this->form = $this->buildForm();
+		
+		$entity = $this->getEntity();
+		
+		$values = (array)$entity;
+		
+		if($values){
 			
-			$entity =& $this->getEntity();
-			
-			$this->form = $this->buildForm();
-			
-			$entity = $this->getEntity();
-			
-			//$session_values = (array)$this->sessionGet('values');
-			
-			//Utility::die_pre($session_values);
-			
-			//$values = array_merge((array)$entity, $session_values);
-			
-			//$values['first_name'] = $entity->getFirstName();
-			
-			$values = (array)$entity;
-			
-			if($values){
-				
-				$this->form->setData($values);
-			}
-			
-			//$this->form->setName($this->getName());
-		//}
+			$this->form->setData($values);
+		}
 		
 		return $this->form;
 	}
@@ -68,6 +58,17 @@ class EditFormWidget extends FormWidget
 		}
 	}
 	
+	
+	
+	protected function saveEvent($entity){
+		
+		$event = new Event();
+		
+		$event->entity = $entity;
+		
+		$this->dispatch('edit.save', $event);
+	}
+	
 	public function handleRequest()
 	{
 		$request = $this->getRequest();
@@ -75,6 +76,8 @@ class EditFormWidget extends FormWidget
 		if ($request->getMethod() == 'POST') {
 			
 			$values = $request->get('form');
+			
+			
 			
 			$form =& $this->getForm();
 			
@@ -85,10 +88,14 @@ class EditFormWidget extends FormWidget
 				$entity =& $this->getEntity();
 				
 				$entity->setValues($values);
-			
+				
+				//Utility::die_pre((array)$entity);
+				
 				$em = $this->getDoctrine()->getEntityManager();
 			    $em->persist($entity);
 			    $em->flush();  
+				
+				$this->saveEvent($entity);
 				
 				return $entity->getId();
 				

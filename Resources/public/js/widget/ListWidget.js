@@ -268,22 +268,25 @@ var ListWidget = Class.create({
 	
 	delete_selected: function(target){
 		
-		var $this = this;
+		if(confirm('Are you sure you want to delete the selected items?')){
 		
-		var href = $(target).data('route');
-		
-		var form = this.container.find('form');
-		
-		var data = form.serializeArray();
+			var $this = this;
 			
-		data.push({name:'ajax', value:'true'});
-		
-		$.post( href, data, function(data){
+			var href = $(target).data('route');
 			
-			var json = jQuery.parseJSON( data );
+			var form = this.container.find('form');
 			
-			$this.handle_data(json, true);
-		});
+			var data = form.serializeArray();
+				
+			data.push({name:'ajax', value:'true'});
+			
+			$.post( href, data, function(data){
+				
+				var json = jQuery.parseJSON( data );
+				
+				$this.handle_data(json, true);
+			});
+		}
 		
 		//this.container.find('input.select').attr('checked', true);
 	},

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session;
 use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Form defines a base form module and persists session form values in the session
@@ -117,6 +118,15 @@ class FormWidget extends Widget
 		return $this->form;
 	}
 	
+	public function onParentGetById($event){
+		
+		$id = $event->id;
+		
+		$this->getById($id);
+		
+		$this->handleRequest();
+	}
+	
 	public function getById($id){
 		
 		//die($id);
@@ -129,6 +139,14 @@ class FormWidget extends Widget
 			
 			$this->setEntity($entity);
 		}
+		
+		parent::getById($id);
+		
+		$event = new Event();
+		
+		$event->entity = $entity;
+		
+		$this->dispatch('get.entity', $event);
 	}
 	
 	public function getRedirect($success){
@@ -152,6 +170,8 @@ class FormWidget extends Widget
 		
 		$form =& $this->getForm();
 		
+		//$csrf = $this->get('form.csrf_provider')->generateCsrfToken('unknown');
+		
 		$actions = $this->getActions();
 				
 		$redirect = $this->getRedirect($success);
@@ -164,6 +184,7 @@ class FormWidget extends Widget
 			'success' => $success,
 			'redirect' => $redirect,
 			'entity_id' => $this->entity_id,
+			//'csrf' => $csrf,
 		);
 		
 		$vars = array_merge(parent::getVars(), $add_vars);
@@ -213,7 +234,11 @@ class FormWidget extends Widget
 		$vars = $this->getVars();
 		
 		if($this->isAjax()){
-		
+			
+			//$csrfToken = $this->get('form.csrf_provider')->generateCsrfToken('unknown');
+			
+			//$vars['csrf'] = $csrfToken;
+			
 			return $this->jsonResponse($vars);
 				
 		}else{

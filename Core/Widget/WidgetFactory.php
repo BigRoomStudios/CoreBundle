@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 class WidgetFactory extends ContainerAware
 {
 
-	public function buildWidget($widget = null, $name)
+	public function buildWidget($widget = null, $name, $controller)
 	{
 		
 		if(!$widget){
@@ -19,8 +19,11 @@ class WidgetFactory extends ContainerAware
 			$widget = new Widget();
 		}
 		
+		
+		$widget->setController($controller);
 		$widget->setContainer($this->container);
 		$widget->setName($name);
+		$widget->setup();
 		
 		return $widget;
 	}

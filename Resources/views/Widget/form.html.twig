@@ -27,15 +27,17 @@
 	
 </div>
 
+{% endblock %}
+{% block widget_js %}
 <script type="text/javascript">
 	
 	var form = new {% if widget_class == 'SearchFormWidget'%}SearchFormWidget{% else %}EditFormWidget{% endif %}({
 		id:'{{route}}_{{name}}_form',
 		name:'{{ name }}', 
 		route:'{{ route }}',
-		action:'{{ path(route, { 'name':name, 'route':'post' }) }}{% if entity_id is defined %}?id={{ entity_id }}{% endif %}'
+		action:'{{ path(route, { 'name':name, 'route':'post' }) }}',
+		entity_id: '{{ entity_id }}'
 	});
 	
 </script> 
-
 {% endblock %}

@@ -61,27 +61,32 @@ class WidgetController extends Controller
 		$this->setup();
 	}
 	
-	protected function setup(){
-		
-		
-	}
+	protected function setup(){}
 	
-	protected function addWidget($widget, $name){
+	public function addWidget($widget, $name){
 		
 		$widget = $this->buildWidget($widget, $name);
 		
 		$this->registerWidget($widget);
+		
+		return $widget;
 	}
 	
 	protected function buildWidget($widget, $name){
 		
-		$widget = $this->widget_factory->buildWidget($widget, $name);
-		
-		$widget->setEntityName($this->entity_name);
-		
+		$widget = $this->widget_factory->buildWidget($widget, $name, $this);
+				
 		$widget->setRouteName($this->getRouteName() . '_widget');
 		
-		$widget->setEntity($this->getEntity());
+		if(!$widget->getEntityName()){
+		
+			$widget->setEntityName($this->entity_name);
+		}
+		
+		if(!$widget->getEntity()){
+			
+			$widget->setEntity($this->getEntity());
+		}
 		
 		return $widget;
 	}

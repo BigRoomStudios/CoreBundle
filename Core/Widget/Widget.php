@@ -26,6 +26,8 @@ class Widget extends ContainerAware
 
 	protected $name;
 	
+	protected $controller;
+	
 	protected $entity;
 	
 	protected $entity_name;
@@ -51,6 +53,18 @@ class Widget extends ContainerAware
 		$this->dispatcher = new EventDispatcher();
 	}
 	
+	public function setup(){}
+	
+	public function setController($controller)
+	{
+		$this->controller = $controller;
+	}
+
+	public function getController()
+	{
+		return $this->controller;
+	}
+	
 	public function setTitle($title)
 	{
 		$this->title = $title;
@@ -71,13 +85,25 @@ class Widget extends ContainerAware
 		return $this->name;
 	}
 	
+	protected function addWidget($widget, $name){
+		
+		return $this->controller->addWidget($widget, $name);
+	}
+	
 	public function setEntity($entity)
 	{
 		$this->entity = $entity;
 	}
 	
-	public function &getEntity()
+	public function & getEntity()
 	{
+		if($this->entity){
+				
+			$em = $this->getDoctrine()->getEntityManager();
+			
+			$this->entity->setEntityManager($em);
+		}
+		
 		return $this->entity;
 	}
 	
@@ -266,6 +292,12 @@ class Widget extends ContainerAware
 	public function getById($id){
 		
 		$this->entity_id = $id;
+		
+		$event = new Event();
+		
+		$event->id = $id;
+		
+		$this->dispatch('get.id', $event);
 	}
 	
 	
@@ -338,6 +370,13 @@ class Widget extends ContainerAware
         return $this->container->get('doctrine');
     }
 	
+	public function getEntityManager()
+    {
+        $doctrine = $this->getDoctrine();
+		
+		return $doctrine->getEntityManager();
+    }
+	
 	/**
      * Get a doctrine repository for a given repository defaults to the primary entity
 	 * 
@@ -346,7 +385,7 @@ class Widget extends ContainerAware
      */
 	public function getRepository($entity_name = null)
 	{		
-		$em = $this->getDoctrine()->getEntityManager();
+		$em = $this->getEntityManager();
 		
 		if($entity_name){
 	
