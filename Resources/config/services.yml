@@ -1,6 +1,6 @@
 parameters:
     widget_factory.class: BRS\CoreBundle\Core\Widget\WidgetFactory
-
+    
 services:
     widget_factory:
         class:     %widget_factory.class%
