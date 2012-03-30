@@ -101,6 +101,8 @@ Swipe.prototype = {
 	
     var style = this.element.style;
 	
+	
+	
 	if ( Modernizr.csstransitions ) {
 		
 		// set duration speed (0 represents 1-to-1 scrolling)
@@ -111,9 +113,9 @@ Swipe.prototype = {
 	    style.msTransform = style.MozTransform = style.OTransform = 'translateX(' + -(index * (this.width + this.margin)) + 'px)';
 
 	}else{
-		
+			
 		var real_this = this;
-	
+				
 		$(this.element).animate({
 	        left: - (index * (this.width + this.margin))  //sm - requires the inner element to be position: relative
 	    }, {
@@ -163,6 +165,7 @@ Swipe.prototype = {
     // cancel next scheduled automatic transition, if any
     this.delay = delay || 0;
     clearTimeout(this.interval);
+	
 
     if (this.index < this.length - 1) this.slide(this.index+1, this.speed); // if not last slide
     else this.slide(0, this.speed); //if last slide return to start
