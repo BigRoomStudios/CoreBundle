@@ -22,5 +22,6 @@ class SRCBundleCleanupCommand extends ContainerAwareCommand
 		$wd = exec('pwd');
 			
 		passthru("find . -name '*.DS_Store' -type f -delete");
+		passthru("find . -name '._*' -type f -delete");
 	}
 }
