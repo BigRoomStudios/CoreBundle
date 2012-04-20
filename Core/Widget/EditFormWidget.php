@@ -22,6 +22,7 @@ class EditFormWidget extends FormWidget
 		
 		'save' => array(
 			'type' => 'button',
+			'class' => 'btn-primary'
 		),
 	);
 	

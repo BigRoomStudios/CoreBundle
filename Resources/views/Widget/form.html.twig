@@ -17,9 +17,7 @@
 	    
 	    {% if actions is defined %}
 	    	<div class="actions wrapper">
-		    	{% for key, field in actions %}
-		    		{% include 'BRSCoreBundle:Widget:fields/' ~ field.type ~ '.html.twig' %}
-		    	{% endfor %}
+		    	{% for key, field in actions %}{% include 'BRSCoreBundle:Widget:fields/' ~ field.type ~ '.html.twig' %}{% endfor %}
 	    	</div>
 	    {% endif %}
 	    

@@ -94,6 +94,10 @@ class FormWidget extends Widget
 				if(isset($field['required'])){
 					
 					$options['required'] = $field['required'];
+					
+				}else{
+					
+					$options['required'] = false;
 				}	
 				
 				if(isset($field['attr'])){

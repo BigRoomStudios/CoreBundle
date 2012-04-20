@@ -26,11 +26,11 @@ class SearchFormWidget extends FormWidget
 		
 		'search' => array(
 			'type' => 'button',
+			'class' => 'btn-primary',
 		),
 		
 		'reset' => array(
 			'type' => 'button',
-			'class' => 'button-grey',
 		),
 	);
 	

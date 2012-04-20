@@ -143,6 +143,11 @@ var ListWidget = Class.create({
 			$this.action_click(this, event);
 		});
 		
+		this.container.find('.list-action button').click(function(event){
+			
+			$this.action_click(this, event);
+		});
+		
 		$(this.container_name + ' input.select').live('click', function(event){
 			
 			$this.select_click(this, event);

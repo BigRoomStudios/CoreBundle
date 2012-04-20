@@ -20,9 +20,11 @@
 	</div>
 	<div class="list">
 		<div class="list-actions wrapper">
-			<button class="list-action" name="select_all" data-route="{{ path(route, { 'name':name, 'route':'select_all' }) }}">{{ 'Select All' | trans }}</button>
-			<button class="list-action" name="select_none" data-route="{{ path(route, { 'name':name, 'route':'select_none' }) }}">{{ 'Select None' | trans }}</button>
-			<button class="list-action" name="delete_selected" data-route="{{ path(route, { 'name':name, 'route':'delete_selected' }) }}">{{ 'Delete' | trans }}</button>
+			<div class="btn-group list-action">
+				<button class="btn btn-small btn-primary" name="select_all" data-route="{{ path(route, { 'name':name, 'route':'select_all' }) }}">{{ 'Select All' | trans }}</button>
+				<button class="btn btn-small btn-primary" name="select_none" data-route="{{ path(route, { 'name':name, 'route':'select_none' }) }}">{{ 'Select None' | trans }}</button>
+			</div>
+			<button class="btn btn-small btn-danger list-action" name="delete_selected" data-route="{{ path(route, { 'name':name, 'route':'delete_selected' }) }}"><i class="icon-trash icon-white"></i> {{ 'Delete' | trans }}</button>
 		</div>
 		<table>
 			<thead>
