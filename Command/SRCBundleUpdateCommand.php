@@ -31,9 +31,9 @@ class SRCBundleUpdateCommand extends ContainerAwareCommand
 				
 				$output->writeln('Updating : ' . $bundle_name . ' from: ' . $git_location);
 				
-				passthru("cd $wd/src/$vendor/$bundle_name");
+				passthru("cd $wd/src/$vendor/$bundle_name; git pull;");
 				
-				passthru("git pull");
+				//passthru("git pull");
 			}	
 		}
     }
