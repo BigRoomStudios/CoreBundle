@@ -366,7 +366,9 @@ class ListWidget extends FormWidget
 			if($selected){
 				
 				$lister = $this->getLister();
-			
+				
+				$filters = array();
+				
 				$id_filters = array();
 				
 				$params = array();
@@ -410,7 +412,12 @@ class ListWidget extends FormWidget
 				
 				//die(print_r($selected));
 				
-				$filters[] = array('filter' => "( $id_filter )", 'params' => $params);
+				if($id_filter){
+				
+					$filters[] = array('filter' => "( $id_filter )", 'params' => $params);
+				}
+				
+				//die(print_r($filters));
 				
 				$lister->setFilters($filters);
 				
