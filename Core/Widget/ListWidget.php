@@ -408,6 +408,8 @@ class ListWidget extends FormWidget
 					$id_filter = implode(' OR ', $id_filters);
 				}
 				
+				//die(print_r($selected));
+				
 				$filters[] = array('filter' => "( $id_filter )", 'params' => $params);
 				
 				$lister->setFilters($filters);

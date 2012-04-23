@@ -32,7 +32,7 @@ class WidgetController extends Controller
 	 * Passes widget routes on to widget controllers
 	 *
 	 * @Route("/widget/{name}/{route}", requirements={"route" = ".*"})
-	 * @Template("BRSCoreBundle:Admin:modules.html.twig")
+	 * @Template("BRSCoreBundle:Widget:base.html.twig")
 	 */
 	public function widgetAction($name, $route = 'render')
 	{
