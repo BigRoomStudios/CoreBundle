@@ -4,4 +4,4 @@
 	{% set params = update(params, param, item[param]) %}
 {% endfor %}
 
-<a class="{{ field.class }}" data-route="{{ field.route.name }}" href="{{ path(field.route.name, params) }}">{{ field.label | trans }}</a>
+<a class="{{ field.class }}" {% if field.nav is defined %}data-route="{{ field.route.name }}"{% endif %} href="{{ path(field.route.name, params) }}">{% if field.label is defined %}{{ field.label | trans }}{% else %}{{ item[key] }}{% endif %}</a>
