@@ -367,6 +367,8 @@ class ListWidget extends FormWidget
 				
 				$lister = $this->getLister();
 				
+				$alias = $lister->getEntityAlias();
+				
 				$filters = array();
 				
 				$id_filters = array();
@@ -383,7 +385,7 @@ class ListWidget extends FormWidget
 							
 							$count++;
 							
-							$id_filters[] = 'm.id != :id' . $count;
+							$id_filters[] = $alias . '.id != :id' . $count;
 							
 							$params['id'.$count] = $id;
 						}
@@ -394,7 +396,7 @@ class ListWidget extends FormWidget
 							
 							$count++;
 							
-							$id_filters[] = 'm.id = :id' . $count;
+							$id_filters[] = $alias . '.id = :id' . $count;
 							
 							$params['id'.$count] = $id;
 						}

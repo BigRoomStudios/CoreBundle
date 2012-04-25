@@ -270,7 +270,7 @@ class EntityLister
 	 * @param string	Full entity name
      * @return string	Shortened entity alias
      */
-	private function getEntityAlias($entity_name = null){
+	public function getEntityAlias($entity_name = null){
 		
 		if(!$entity_name){
 			

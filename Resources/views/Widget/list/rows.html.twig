@@ -1,3 +1,14 @@
+<tr class="row-template">
+	{% if selectable %}
+		<td class="select" style="width:25px;">
+			<input type="hidden" name="selected[0]" value=0 />
+			<input type="checkbox" class="select" data-id="0" name="selected[0]" value=1 />
+		</td>
+	{% endif %}
+	{% for key, field in list_fields %}
+		<td style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}"><div class="td"><span class="{{key}}-placeholder"></span></div></td>
+	{% endfor %}
+</tr>
 {% for item in list %}
 	
 	{% set is_selected = false %}
@@ -19,7 +30,7 @@
 			</td>
 		{% endif %}
 		{% for key, field in list_fields %}
-			<td style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}"><div>
+			<td style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}"><div class="td">
 				{% if field.type is defined %}
 					{% include 'BRSCoreBundle:Widget:fields/' ~ field.type ~ '.html.twig' %}
 				{% else %}

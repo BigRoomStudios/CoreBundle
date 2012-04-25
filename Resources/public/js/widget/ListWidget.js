@@ -48,6 +48,8 @@ var ListWidget = Class.create({
 		//this.$row_container.width(this.$headers_table.width());
 		
 		this.$row_container.find('table').width(this.$headers_table.width());
+		
+		this.$row_container.find('tr.row-template').detach();
 	},
 	
 	transform_table: function(){
@@ -83,9 +85,15 @@ var ListWidget = Class.create({
 		
 		$table.width(this.container.width());
 		
+		var $tr = $table.find('tr:first');
+		
 		var $td = $table.find('td:first');
 		
 		this.row_height = $td.outerHeight(true);
+		
+		this.$row_template = $tr;
+		
+		$tr.detach();
 		
 		//alert(this.row_height);
 		
@@ -112,6 +120,8 @@ var ListWidget = Class.create({
 		$page_table.find('tbody').empty();
 		
 		this.$page_table = $page_table;
+		
+		
 		
 		this.redraw_pages();
 		
@@ -152,6 +162,24 @@ var ListWidget = Class.create({
 			
 			$this.select_click(this, event);
 		});
+	},
+	
+	add_row: function(){
+		
+		if(this.config.pages < 1){
+			
+			this.config.pages = 1;
+			this.redraw_pages();
+		}
+		
+		$page = this.$row_container.find('.page-1');
+		
+		var $new_row = this.$row_template.clone();
+		
+		$page.find('tbody').prepend($new_row);
+		
+		return $new_row;
+		
 	},
 	
 	redraw_pages: function(){
