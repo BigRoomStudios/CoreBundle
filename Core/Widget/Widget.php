@@ -163,6 +163,13 @@ class Widget extends ContainerAware
 		return $ids;
 	}
 	
+	public function getWidgetID(){
+		
+		$id = $this->route_name . '_' . $this->name;
+		
+		return $id;
+	}
+	
 	public function getVars()
 	{
 		$vars = array(
@@ -171,7 +178,9 @@ class Widget extends ContainerAware
 			'route' => $this->route_name,
 			'title' => $this->title,
 			'widget_class' => $this->getClassName(),
+			'widget_id' => $this->getWidgetID(),
 			'listeners' => $this->getListenerIds(),
+			'max_file_size' => (int)ini_get('upload_max_filesize') * 1024 * 1024,
 		);	
 					
 		return $vars;

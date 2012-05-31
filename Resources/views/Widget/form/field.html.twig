@@ -5,7 +5,7 @@
 {% elseif field.type == 'hidden' %}
 	{{ form_widget(form[key]) }}
 {% else %}
-	<div class="field">
+	<div class="field" id="form_field_{{ key }}">
 	    {{ form_label(form[key]) }}
 	    {{ form_errors(form[key]) }}
 	    {{ form_widget(form[key]) }}
