@@ -309,6 +309,15 @@ class Widget extends ContainerAware
 		$this->dispatch('get.id', $event);
 	}
 	
+	public function onParentGetById($event){
+		
+		$id = $event->id;
+		
+		$this->getById($id);
+		
+		$this->handleRequest();
+	}
+	
 	
 	/**
      * Returns true if the service id is defined.
@@ -426,6 +435,8 @@ class Widget extends ContainerAware
         return $this->getRequest()->getSession();
     }
 	
+	public function startSession(){}
+	
 	public function sessionSet($key, $value)
 	{
 		$session = $this->getSession();
@@ -469,6 +480,17 @@ class Widget extends ContainerAware
 			
 			return $widgets[$session_name][$key];
 		}
+	}
+	
+	public function getActionUrl($action, $absolute = false){
+		
+		$route = $this->getRouteName();
+		
+		$name = $this->getName();
+		
+		$params = array('name' => $name, 'route' => $action);
+		
+		return $this->generateUrl($route, $params, $absolute);
 	}
 	
 	/**

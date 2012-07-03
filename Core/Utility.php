@@ -3,6 +3,7 @@
 namespace BRS\CoreBundle\Core;
 
 use Symfony\Bundle\DoctrineBundle\Registry;
+use Symfony\Component\Form\Form;
 
 /**
  * Utility is a collection of generic handy functions
@@ -48,4 +49,33 @@ class Utility
 		$func = create_function('$c', 'return strtoupper($c[1]);');
 		return preg_replace_callback('/_([a-z])/', $func, $str);
 	}
+	
+	static function get_form_errors(\Symfony\Component\Form\Form $form) {
+		
+	    $errors = array();
+	    
+	    foreach ($form->getErrors() as $key => $error) {
+	        
+			$template = $error->getMessageTemplate();
+			$parameters = $error->getMessageParameters();
+			
+			foreach($parameters as $var => $value){
+				
+				$template = str_replace($var, $value, $template);
+			}
+			
+	        $errors[$key] = $template;
+	    }
+		
+	    if ($form->hasChildren()) {
+	        foreach ($form->getChildren() as $child) {
+	            if (!$child->isValid()) {
+	                $errors[$child->getName()] = $this->getErrorMessages($child);
+	            }
+	        }
+	    }
+	
+	    return $errors;
+	}
+	
 }	

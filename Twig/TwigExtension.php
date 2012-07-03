@@ -19,6 +19,13 @@ class TwigExtension extends \Twig_Extension {
         );
     }
 	
+	public function getTests()
+    {
+        return array(
+            'numeric' => new \Twig_Test_Method($this, 'numeric'),
+        );
+    }
+	
 	public function update($object, $key, $value){
 		
 		$object[$key] = $value;
@@ -41,5 +48,10 @@ class TwigExtension extends \Twig_Extension {
     {
         return 'brs_twig_extension';
     }
+	
+	public function numeric($value){
+		
+		return is_numeric($value);
+	}
 
 }

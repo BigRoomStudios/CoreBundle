@@ -3,7 +3,8 @@
 namespace BRS\CoreBundle\Core\Widget;
 
 use BRS\CoreBundle\Core\Utility as brs;
-
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Form defines a base form module and persists session form values in the session

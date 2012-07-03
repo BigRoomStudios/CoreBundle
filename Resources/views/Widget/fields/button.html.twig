@@ -2,8 +2,12 @@
 	
 	{% set params = {} %}
 
-	{% for param in field.route.params %}
-		{% set params = update(params, param, item[param]) %}
+	{% for key, param in field.route.params %}
+		{% if key is numeric %}
+			{% set params = update(params, param, item[param]) %}
+		{% else %}
+			{% set params = update(params, key, item[param]) %}
+		{% endif %}
 	{% endfor %}
 	
 {% endif %}

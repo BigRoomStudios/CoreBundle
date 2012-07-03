@@ -11,6 +11,11 @@ class SuperEntity
 		
 		$this->em = $em;
 	}
+	
+	public function getEntityManager(){
+		
+		$this->em = $em;
+	}
 		
 	public function setValues($values){
 		

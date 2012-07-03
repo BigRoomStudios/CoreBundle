@@ -90,6 +90,8 @@ class WidgetController extends Controller
 			$widget->setEntity($this->getEntity());
 		}
 		
+		$widget->startSession();
+		
 		return $widget;
 	}
 	
@@ -193,28 +195,7 @@ class WidgetController extends Controller
 	
 	private function getErrorMessages(\Symfony\Component\Form\Form $form) {
 		
-	    $errors = array();
-	    
-	    foreach ($form->getErrors() as $key => $error) {
-	        
-			$template = $error->getMessageTemplate();
-			$parameters = $error->getMessageParameters();
-			
-			foreach($parameters as $var => $value){
-				
-				$template = str_replace($var, $value, $template);
-			}
-			
-	        $errors[$key] = $template;
-	    }
-		
-	    if ($form->hasChildren()) {
-	        foreach ($form->getChildren() as $child) {
-	            if (!$child->isValid()) {
-	                $errors[$child->getName()] = $this->getErrorMessages($child);
-	            }
-	        }
-	    }
+	    $errors = Utility::get_form_errors($form);
 	
 	    return $errors;
 	}

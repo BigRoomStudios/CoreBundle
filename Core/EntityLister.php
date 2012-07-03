@@ -36,6 +36,8 @@ class EntityLister
 	
 	protected $page_size;
 	
+	protected $joins;
+	
 	/**
      * Create a new EntityLister
      *
@@ -151,7 +153,6 @@ class EntityLister
 		return $this->filters;
 	}
 	
-	
 	/**
      * Sets list order
      *
@@ -172,6 +173,25 @@ class EntityLister
 		return $this->order_by;
 	}
 	
+	public function setJoins($joins){
+		
+		$this->joins = $joins;
+	}
+	
+	public function getJoins(){
+		
+		return $this->joins;
+	}
+	
+	
+	public function addJoin($link, $alias, $join_type = 'leftJoin'){
+		
+		$this->joins[$link] = array(
+			'link' => $link,
+			'alias' => $alias,
+			'type' => $join_type,
+		);
+	}
 	/**
      * Sets page number
      *
@@ -215,7 +235,7 @@ class EntityLister
 	}
 	
 	/**
-     * Gets an array of entity data based on the seleced list fields and current filters
+     * Gets an array of entity data based on the selected list fields and current filters
      *
      * @return array 	The entity data
      */
@@ -236,7 +256,7 @@ class EntityLister
 	}
 	
 	/**
-     * Gets an array of entity data based on the seleced list fields and current filters
+     * Gets an array of entity data based on the selected list fields and current filters
      *
      * @return array 	The entity data
      */
@@ -307,7 +327,9 @@ class EntityLister
 		
 		foreach((array)$fields as $key => $field){
 			
-			$pieces[] = $alias . '.' . $key;
+			$field_alias = isset($field['alias']) ? $field['alias'] : $alias;
+			
+			$pieces[] = $field_alias . '.' . $key;
 		}
 		
 		$dql = implode(', ', $pieces);
@@ -315,6 +337,7 @@ class EntityLister
 		return $dql;
 	}
 	
+
 	/**
      * Adds the list filters to an existing query builder
      *
@@ -334,7 +357,9 @@ class EntityLister
 			
 				$value = $field['value'];
 				
-				$field_ref = $alias . '.' . $key;
+				$field_alias = isset($field['alias']) ? $field['alias'] : $alias;
+				
+				$field_ref = $field_alias . '.' . $key;
 				
 				if(!empty($value) && isset($field['type'])){
 					
@@ -381,6 +406,35 @@ class EntityLister
 	}
 	
 	/**
+     * Adds the join statements
+     *
+     * @return QueryBuilder	The doctrine query builder object
+     */
+	private function addJoinsDQL($qb){
+		
+		$fields = $this->getFilterFields();
+		
+		$alias = $this->getEntityAlias();
+		
+		//util::die_pre($fields);
+		
+		$joins = $this->getJoins();
+		
+		foreach((array)$joins as $key => $join){
+			
+			switch($join['type']){
+				
+				
+				default:
+					$qb->leftJoin($join['link'], $join['alias']);
+					break;
+			}
+		}
+		
+		return $qb;
+	}
+	
+	/**
      * Builds a doctrine query to pull the list results
      *
      * @return Query	The doctrine query object
@@ -396,6 +450,7 @@ class EntityLister
 		$qb->add('select', 'COUNT(' . $alias . '.id)')
 		   ->add('from', $this->entity_name . ' ' . $alias);
 		
+		$qb = $this->addJoinsDQL($qb);
 		$qb = $this->addFieldFilters($qb);
 		$qb = $this->addFilters($qb);
 		
@@ -420,7 +475,9 @@ class EntityLister
 		$qb->add('select', $fields)
 		   ->add('from', $this->entity_name . ' ' . $alias);
 		
+		$qb = $this->addJoinsDQL($qb);
 		$qb = $this->addFieldFilters($qb);
+		$qb = $this->addFilters($qb);
 		
 		$page = $this->getPage();
 		$page_size = $this->getPageSize();
@@ -434,6 +491,15 @@ class EntityLister
 		$order_by = $this->getOrderBy();
 		
 		if($order_by){
+			
+			$fields = $this->getListFields();
+			
+			$order_field = $fields[$order_by];
+			
+			if(isset($order_field['alias'])){
+				
+				$alias = $order_field['alias'];
+			}
 			
 			$qb->add('orderBy', $alias . '.' . $order_by);
 		}

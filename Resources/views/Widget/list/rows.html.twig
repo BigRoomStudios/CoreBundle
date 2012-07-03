@@ -30,13 +30,15 @@
 			</td>
 		{% endif %}
 		{% for key, field in list_fields %}
-			<td style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}"><div class="td">
-				{% if field.type is defined %}
-					{% include 'BRSCoreBundle:Widget:fields/' ~ field.type ~ '.html.twig' %}
-				{% else %}
-					{{ item[key] }}
-				{% endif %}
-			</div></td>
+			{% if field.type != 'hidden' %}
+				<td style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}"><div class="td">
+					{% if field.type is defined %}
+						{% include 'BRSCoreBundle:Widget:fields/' ~ field.type ~ '.html.twig' %}
+					{% else %}
+						{{ item[key] }}
+					{% endif %}
+				</div></td>
+			{% endif %}
 		{% endfor %}
 	</tr>
 	

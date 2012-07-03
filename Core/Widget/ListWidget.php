@@ -30,6 +30,10 @@ class ListWidget extends FormWidget
 	
 	protected $selectable = true;
 	
+	protected $joins;
+	
+	protected $filters;
+	
 	public function setListFields($fields)
 	{
 		$this->list_fields = $fields;
@@ -88,6 +92,47 @@ class ListWidget extends FormWidget
 		return $this->search_widget;
 	}
 	
+	public function setJoins($joins){
+		
+		$this->joins = $joins;
+	}
+	
+	public function getJoins(){
+		
+		return $this->joins;
+	}
+	
+	public function addJoin($link, $alias, $join_type = 'leftJoin'){
+		
+		$this->joins[$link] = array(
+			'link' => $link,
+			'alias' => $alias,
+			'type' => $join_type,
+		);
+	}
+	
+	/**
+     * Sets filters for default list module
+     *
+     * @param array  $fields       An array of field definitions
+     */
+	public function setFilters($filters){
+		
+		$this->filters = $filters;
+		
+		$this->sessionSet('filters', $this->filters);
+	}
+	
+	/**
+     * Gets current filters for default list module
+     *
+     * @return array The list fields
+     */
+	public function getFilters(){
+		
+		return $this->filters;
+	}
+	
 	/**
      * Gets an EntityLister for the primary entity
 	 * 
@@ -100,6 +145,12 @@ class ListWidget extends FormWidget
 			$lister = new EntityLister($this->get('doctrine'));
 			
 			$lister->setEntity($this->entity_name);
+			
+			//Utility::die_pre($this->getJoins());
+			
+			$lister->setJoins($this->getJoins());
+			
+			$lister->setFilters($this->getFilters());
 			
 			$fields = $this->getListFields();
 			
@@ -140,13 +191,32 @@ class ListWidget extends FormWidget
 		$this->sessionSet('selected', null);
 	}
 	
+	public function createSession(){
+		
+		//$this->sessionSet('joins', $this->joins);
+		
+		$this->sessionSet('filters', $this->filters);
+	}
 	
 	public function restoreSession(){
-			
+		
+		//$session = $this->getRequest()->getSession();
+		
+		//$this->joins = $this->sessionGet('joins');
+		
+		//$this->filters = $this->sessionGet('filters');
+		
 		$lister =& $this->getLister();
 		
-		$session = $this->getRequest()->getSession();
+		//$joins = $this->sessionGet('joins');
+		
+		$filters = $this->sessionGet('filters');
+		
+		if($filters){
 			
+			$lister->setFilters($filters);
+		}
+		
 		$order = $this->sessionGet('order');
 		
 		$page = $this->sessionGet('page');
