@@ -433,6 +433,8 @@ class ListWidget extends FormWidget
 			
 			$select_all = $this->sessionGet('select_all');
 			
+			//$this->restoreSession();
+			
 			if($selected){
 				
 				$lister = $this->getLister();
@@ -484,6 +486,12 @@ class ListWidget extends FormWidget
 				
 				//die(print_r($selected));
 				
+				$current_filters = (array)$this->sessionGet('filters');
+				
+				//$current_filters = (array)$this->getFilters();
+				
+				//Utility::die_pre($current_filters);
+				
 				if($id_filter){
 				
 					$filters[] = array('filter' => "( $id_filter )", 'params' => $params);
@@ -491,11 +499,11 @@ class ListWidget extends FormWidget
 				
 				//die(print_r($filters));
 				
-				$lister->setFilters($filters);
+				$lister->setFilters(array_merge($current_filters, $filters));
 				
 				$lister->delete();
 				
-				$lister->setFilters(null);
+				$lister->setFilters($current_filters);
 				
 				$this->sessionSet('page', 1);
 				

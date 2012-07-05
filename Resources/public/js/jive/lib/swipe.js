@@ -10,7 +10,7 @@
 */
 
 window.Swipe = function(element, options) {
-
+	  
   // return immediately if element doesn't exist
   if (!element) return null;
 
@@ -59,13 +59,17 @@ Swipe.prototype = {
     // get and measure amt of slides
     this.slides = this.element.children;
     this.length = this.slides.length;
-
+    
     // return immediately if their are less than two slides
     if (this.length < 2) return null;
-
+    
+    
+    
     // determine width of each slide
     //this.width = this.container.getBoundingClientRect().width;
     this.width = $(this.container).width(); //sm - use jquery to get width for ie
+    
+    //alert(this.width);
 
     // return immediately if measurement fails
     if (!this.width) return null;
