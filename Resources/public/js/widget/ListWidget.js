@@ -231,6 +231,16 @@ var ListWidget = Class.create({
 			$this.page_click(this, event);
 			
 		});
+		
+		if(!this.config.paging){
+			
+			$paging.hide();
+			
+		}else{
+			
+			$paging.show();
+		}
+		
 	},
 	
 	action_click: function(target, event){
@@ -263,6 +273,106 @@ var ListWidget = Class.create({
 			
 			$row.removeClass('selected');
 		}
+	},
+	
+	
+	enable_reordering: function(){
+		
+		var $this = this;
+
+		$this.$headers_table.find('.reorder-header').removeClass('hidden');
+			
+		var $page = $this.$row_container.find('.page');
+		
+		var $table = $this.$row_container.find('.page-1');
+		
+		var $body = $this.$row_container.find('.page-1 tbody');
+		
+		var new_row = $this.$row_template.clone();
+		
+		var $head = $this.$row_container.find('.page-1 thead');
+		
+		new_row.find('.reorder-dragger').removeClass('hidden');
+		
+		$head.prepend(new_row);
+		
+		$page.height($table.height());
+		
+		$page.css('margin-top', '-' + new_row.height() + 'px');
+		
+		//new_row.height(1);
+		
+		var placeholder = $this.$row_template.clone();
+		
+		$body.sortable({
+			
+			axis: 'y',
+			
+			handle: '.reorder-dragger',
+			
+			helper: function(e, ui) {
+				
+				ui.children().each(function() {
+					$(this).width($(this).width());
+				});
+				return ui;
+			},
+			
+			start: function (e, ui) { 
+			
+				ui.placeholder.html(placeholder.html());
+			},
+			   
+			update: function(e, ui){
+				
+				var test = $body.sortable('toArray');
+				
+				var new_order = new Array();
+				
+				$.each(test, function(index, value){
+					
+					var row_id = value.split('-')[1];
+					
+					new_order[index] = row_id;
+					
+				});
+				
+				var data = {
+					'ajax': true,
+					'order': new_order
+				};
+				
+				var href = $this.action + '/update_order';
+				
+				$.post( href, data, function(data){
+					
+					$j.msg({
+					    type:'success',
+					    content:"<p><b>Success!</b> Item order was updated.</p>" // should come from server
+					});
+				});
+			}
+		});
+		
+		//$body.find('a').attr('disabled', '');
+		
+		//$body.find('input').attr('disabled', '');
+			
+		//$body.disableSelection();
+	},
+	
+	reorder: function(target){
+		
+		var $this = this;
+		
+		this.$headers_table.find('.selected').removeClass('selected');
+		
+		var href = $(target).data('route');
+		
+		this.load(href, true, function(data){
+			
+			$this.enable_reordering();
+		});
 	},
 	
 	select_all: function(target){
@@ -357,6 +467,8 @@ var ListWidget = Class.create({
 		this.load(action, true);
 		
 		this.$headers_table.find('.selected').removeClass('selected');
+		
+		this.$headers_table.find('.reorder-header').addClass('hidden');
 		
 		$(target).closest('th').addClass('selected');
 		
@@ -464,6 +576,7 @@ var ListWidget = Class.create({
 			$this.config.page = json.page;
 			$this.config.pages = json.pages;
 			$this.config.page_size = json.page_size;
+			$this.config.paging = json.paging;
 			
 			var rendered = json.rendered;
 		 	
@@ -484,7 +597,7 @@ var ListWidget = Class.create({
 		}
 	},
 	
-	load: function(href, clear) {
+	load: function(href, clear, callback) {
 		
 		//console.log(href);
 		
@@ -496,6 +609,11 @@ var ListWidget = Class.create({
 			function(json) {
 				
 				$this.handle_data(json, clear);
+				
+				if(callback){
+					
+					callback(json);
+				}
 			}  
 		);
 		

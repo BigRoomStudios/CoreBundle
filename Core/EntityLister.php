@@ -36,6 +36,8 @@ class EntityLister
 	
 	protected $page_size;
 	
+	protected $paging = true;
+	
 	protected $joins;
 	
 	/**
@@ -183,7 +185,6 @@ class EntityLister
 		return $this->joins;
 	}
 	
-	
 	public function addJoin($link, $alias, $join_type = 'leftJoin'){
 		
 		$this->joins[$link] = array(
@@ -192,6 +193,27 @@ class EntityLister
 			'type' => $join_type,
 		);
 	}
+	
+	/**
+     * Sets paging enabled or disabled
+     *
+     * @param boolean  $paging       paging enabled
+     */
+	public function setPaging($paging){
+		
+		$this->paging = $paging;
+	}
+	
+	/**
+     * Get paging status
+     *
+     * @return boolean paging enabled or disabled
+     */
+	public function getPaging(){
+		
+		return $this->paging;
+	}
+	
 	/**
      * Sets page number
      *
@@ -200,6 +222,7 @@ class EntityLister
 	public function setPage($page){
 		
 		if($page){
+			
 			$this->page = $page;
 		}
 	}
@@ -323,13 +346,17 @@ class EntityLister
 		
 		$pieces = array();
 		
-		$pieces[] = $alias . '.id';
+		$id_field = $alias . '.id';
+		
+		$pieces[$id_field] = $id_field;
 		
 		foreach((array)$fields as $key => $field){
 			
 			$field_alias = isset($field['alias']) ? $field['alias'] : $alias;
 			
-			$pieces[] = $field_alias . '.' . $key;
+			$field_name = $field_alias . '.' . $key;
+			
+			$pieces[$field_name] = $field_name;
 		}
 		
 		$dql = implode(', ', $pieces);
@@ -479,10 +506,11 @@ class EntityLister
 		$qb = $this->addFieldFilters($qb);
 		$qb = $this->addFilters($qb);
 		
+		$paging = $this->getPaging();
 		$page = $this->getPage();
 		$page_size = $this->getPageSize();
 		
-		if($page && $page_size){
+		if($paging && $page && $page_size){
 			
 		   $qb->setFirstResult( ($page - 1) * $page_size )
 		      ->setMaxResults( $page_size );
@@ -494,11 +522,14 @@ class EntityLister
 			
 			$fields = $this->getListFields();
 			
-			$order_field = $fields[$order_by];
+			if(isset($fields[$order_by])){
 			
-			if(isset($order_field['alias'])){
+				$order_field = $fields[$order_by];
 				
-				$alias = $order_field['alias'];
+				if(isset($order_field['alias'])){
+					
+					$alias = $order_field['alias'];
+				}
 			}
 			
 			$qb->add('orderBy', $alias . '.' . $order_by);

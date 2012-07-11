@@ -26,6 +26,8 @@ class ListWidget extends FormWidget
 	
 	protected $order_by;
 	
+	protected $paging = true;
+	
 	protected $page_size = 10;
 	
 	protected $selectable = true;
@@ -33,6 +35,19 @@ class ListWidget extends FormWidget
 	protected $joins;
 	
 	protected $filters;
+	
+	protected $reorder_field;
+	
+	public function setReorderField($reorder_field)
+	{
+		$this->reorder_field = $reorder_field;
+	}
+	
+	public function getReorderField()
+	{
+		return $this->reorder_field;
+	}
+	
 	
 	public function setListFields($fields)
 	{
@@ -42,6 +57,28 @@ class ListWidget extends FormWidget
 	public function getListFields()
 	{
 		return $this->list_fields;
+	}
+	
+	/**
+     * Sets paging enabled or disabled
+     *
+     * @param boolean  $paging       paging enabled
+     */
+	public function setPaging($paging){
+		
+		$this->paging = $paging;
+		
+		$this->sessionSet('paging', $paging);
+	}
+	
+	/**
+     * Get paging status
+     *
+     * @return boolean paging enabled or disabled
+     */
+	public function getPaging(){
+		
+		return $this->paging;
 	}
 	
 	/**
@@ -200,15 +237,7 @@ class ListWidget extends FormWidget
 	
 	public function restoreSession(){
 		
-		//$session = $this->getRequest()->getSession();
-		
-		//$this->joins = $this->sessionGet('joins');
-		
-		//$this->filters = $this->sessionGet('filters');
-		
 		$lister =& $this->getLister();
-		
-		//$joins = $this->sessionGet('joins');
 		
 		$filters = $this->sessionGet('filters');
 		
@@ -219,6 +248,8 @@ class ListWidget extends FormWidget
 		
 		$order = $this->sessionGet('order');
 		
+		$paging = $this->sessionGet('paging');
+		
 		$page = $this->sessionGet('page');
 		
 		$page_size = $this->sessionGet('page_size');
@@ -226,6 +257,17 @@ class ListWidget extends FormWidget
 		if($order){
 			
 			$lister->setOrderBy($order);
+		}
+		
+		if($paging || $paging === false){
+			
+			$lister->setPaging($paging);
+				
+		}else{
+			
+			$lister->setPaging($this->paging);
+			
+			$this->sessionSet('paging', $this->paging);
 		}
 		
 		if($page){
@@ -284,8 +326,18 @@ class ListWidget extends FormWidget
 		
 		$selected = $this->sessionGet('selected');
 		
+		$paging = $this->sessionGet('paging');
+		
+		$reordering = $this->sessionGet('reordering');
+		
 		$pages = ceil($count / $page_size);
 		
+		if(!$paging){
+			
+			$pages = 1;
+		}
+		
+		$reorder_field = $this->getReorderField();
 		
 		$add_vars = array(
 			'list_fields' => $this->getListFields(),
@@ -295,10 +347,13 @@ class ListWidget extends FormWidget
 			'total' => $count,
 			'page' => $page,
 			'pages' => $pages,
+			'paging' => $paging,
 			'page_size' => $page_size,
 			'selectable' => $this->selectable,
 			'select_all' => $select_all,
 			'selected' => $selected,
+			'reorder_field' => $reorder_field,
+			'reordering' => $reordering,
 		);
 		
 		$vars = array_merge(parent::getVars(), $add_vars);
@@ -317,16 +372,19 @@ class ListWidget extends FormWidget
 			if(isset($get['order'])){
 				
 				$this->sessionSet('order', $get['order']);
+				$this->reorderingOff();
 			}
 			
 			if(isset($get['page'])){
 			
 				$this->sessionSet('page', $get['page']);
+				$this->reorderingOff();
 			}
 			
 			if(isset($get['page_size'])){
 			
 				$this->sessionSet('page_size', $get['page_size']);
+				$this->reorderingOff();
 			}
 	    }
 		
@@ -360,7 +418,7 @@ class ListWidget extends FormWidget
 			
 			$vars['rendered'] = $this->container->get('templating')->render($view, $vars);
 			
-			unset($vars['list']);
+			//unset($vars['list']);
 			
 			return $this->jsonResponse($vars);
 				
@@ -369,6 +427,79 @@ class ListWidget extends FormWidget
 			$response = new Response();
 			
 			return $this->container->get('templating')->renderResponse($view, $vars, $response);
+		}
+	}
+	
+	
+	public function reorderingOff(){
+		
+		$this->sessionSet('paging', $this->getPaging());
+		
+		$this->sessionSet('reordering', false);
+		
+	}
+	
+	/**
+	 * select all items
+	 *
+	 * @Route("/reorder")
+	 */
+	public function reorderAction()
+	{	
+		$request = $this->getRequest();
+		
+		//if($request->getMethod() == 'POST'){
+			
+			$reorder_field = $this->getReorderField();
+			
+			$this->sessionSet('page', 1);
+			
+			$this->sessionSet('paging', false);
+			
+			$this->sessionSet('order', $reorder_field);
+			
+			$this->sessionSet('reordering', true);
+			
+			//die('here' . $request->request->get('ajax'));
+			
+			
+			return $this->rowsAction();
+			
+			
+		//}
+	}
+	
+	
+	/**
+	 * delete selected items
+	 *
+	 * @Route("/update_order")
+	 */
+	public function updateOrderAction()
+	{	
+		$request = $this->getRequest();
+		
+		if($request->getMethod() == 'POST'){
+			
+			$order = $request->get('order');
+			
+			//Utility::die_pre($order);
+			
+			if($order){
+				
+				$repo = $this->getRepository();
+				
+				$em = $this->getEntityManager();
+				
+				foreach ($repo->findById($order) as $obj) {
+					
+					$obj->setDisplayOrder(array_search($obj->getId(), $order));
+				}
+				
+				$em->flush();
+			}
+			
+			//return $this->rowsAction();
 		}
 	}
 	

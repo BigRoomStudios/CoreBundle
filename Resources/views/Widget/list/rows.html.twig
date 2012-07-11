@@ -5,6 +5,9 @@
 			<input type="checkbox" class="select" data-id="0" name="selected[0]" value=1 />
 		</td>
 	{% endif %}
+	
+	<td class="reorder-dragger {% if not reordering %}hidden{% endif %}" style="width:25px;"><span></span></td>
+	
 	{% for key, field in list_fields %}
 		<td style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}"><div class="td"><span class="{{key}}-placeholder"></span></div></td>
 	{% endfor %}
@@ -22,13 +25,16 @@
 		{% endif %}
 	{% endif %}
 	
-	<tr class="row-{{ item.id }} {% if is_selected %}selected{% endif %}">
+	<tr id="row-{{ item.id }}" class="row-{{ item.id }} {% if is_selected %}selected{% endif %}">
 		{% if selectable %}
 			<td class="select" style="width:25px;">
 				<input type="hidden" name="selected[{{ item.id }}]" value=0 />
 				<input type="checkbox" class="select" data-id="{{ item.id }}" name="selected[{{ item.id }}]" {% if is_selected %}checked=1{% endif %} value=1 />
 			</td>
 		{% endif %}
+		
+		<td class="reorder-dragger {% if not reordering %}hidden{% endif %}" style="width:25px;"><span></span></td>
+		
 		{% for key, field in list_fields %}
 			{% if field.type != 'hidden' %}
 				<td style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}"><div class="td">

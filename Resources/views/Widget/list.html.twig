@@ -20,11 +20,20 @@
 	</div>
 	<div class="list">
 		<div class="list-actions wrapper">
+			
+			{% block pre_list_actions %}
+			{% endblock %}
+			
 			{% block list_actions %}
 			<div class="btn-group list-action">
 				<button class="btn btn-small" name="select_all" data-route="{{ path(route, { 'name':name, 'route':'select_all' }) }}">{{ 'Select All' | trans }}</button>
 				<button class="btn btn-small" name="select_none" data-route="{{ path(route, { 'name':name, 'route':'select_none' }) }}">{{ 'Select None' | trans }}</button>
 			</div>
+			
+			{% if reorder_field %}
+				<button class="btn btn-small list-action" data-route="{{ path(route, { 'name':name, 'route':'reorder' }) }}" name="reorder">{{ 'Set Display Order' | trans }}</button>
+			{% endif %}
+			
 			<button class="btn btn-small btn-danger list-action" name="delete_selected" data-route="{{ path(route, { 'name':name, 'route':'delete_selected' }) }}"><i class="icon-trash icon-white"></i> {{ 'Delete' | trans }}</button>
 			{% endblock %}
 		</div>
@@ -33,6 +42,7 @@
 				{% if selectable %}
 					<th class="select" style="width:25px;"></th>
 				{% endif %}
+				<th class="reorder-header {% if not reordering %}hidden{% endif %}" style="width:25px;"></th>
 				{% for key, field in list_fields %}
 					{% if field.type != 'hidden' %}
 						<th style="{% if field.width is defined %}width:{{ field.width }}px;{% endif %}" {% if field.nonentity is not defined %} class="{% if order_by == key %}selected{% endif %}" data-field="{{ key }}"{% endif %}>{% if field.nonentity is not defined %}<a href="?{{ name }}[order]={{ key }}">{{ key | trans | title }}</a>{% endif %}</th>
@@ -58,6 +68,12 @@
 		pages: {{ pages }},
 		page_size: {{ page_size }},
 	});
+	
+	{% if reordering %} 
+		
+		list.enable_reordering();
+		
+	{% endif %}
 	
 </script>
 {% endblock %}
