@@ -19,7 +19,7 @@ window.Swipe = function(element, options) {
   // retreive options
   this.options = options || {};
   this.index = this.options.startSlide || 0;
-  this.speed = this.options.speed || 300;
+  this.speed = this.options.speed || 200;
   this.callback = this.options.callback || function() {};
   this.delay = this.options.auto || 0;
   this.margin = this.options.margin || 0;
@@ -78,6 +78,16 @@ Swipe.prototype = {
     
     this.container.style.visibility = 'hidden';
 	
+	//duplicate first slide append to end of slide show for wrapping:
+	$(this.element).append($(this.slides[0]).clone());
+	
+	//duplicate first slide append to end of slide show for wrapping:
+	$(this.element).prepend($(this.slides[this.length-1]).clone());
+	
+	this.real_length = this.length;
+	
+	this.length += 2;
+	
     // dynamic css
     this.element.style.width = (this.slides.length * (this.width + this.margin)) + 'px';
     
@@ -105,7 +115,7 @@ Swipe.prototype = {
 	
     var style = this.element.style;
 	
-	
+	//console.log(index);
 	
 	if ( Modernizr.csstransitions ) {
 		
@@ -113,15 +123,15 @@ Swipe.prototype = {
 	    style.webkitTransitionDuration = style.MozTransitionDuration = style.msTransitionDuration = style.OTransitionDuration = style.transitionDuration = duration + 'ms';
 	
 	    // translate to given index position
-	    style.webkitTransform = 'translate3d(' + -(index * (this.width + this.margin)) + 'px,0,0)';
-	    style.msTransform = style.MozTransform = style.OTransform = 'translateX(' + -(index * (this.width + this.margin)) + 'px)';
+	    style.webkitTransform = 'translate3d(' + -((index+1) * (this.width + this.margin)) + 'px,0,0)';
+	    style.msTransform = style.MozTransform = style.OTransform = 'translateX(' + -((index+1) * (this.width + this.margin)) + 'px)';
 
 	}else{
 			
 		var real_this = this;
 				
 		$(this.element).animate({
-	        left: - (index * (this.width + this.margin))  //sm - requires the inner element to be position: relative
+	        left: - ((index+1) * (this.width + this.margin))  //sm - requires the inner element to be position: relative
 	    }, {
 	    	duration: duration,
 	    	easing: 'swing',
@@ -158,10 +168,12 @@ Swipe.prototype = {
     // cancel next scheduled automatic transition, if any
     this.delay = delay || 0;
     clearTimeout(this.interval);
-
+	
     // if not at first slide
-    if (this.index) this.slide(this.index-1, this.speed);
-
+    if ((this.index >= 0)){
+    	
+    	 this.slide(this.index-1, this.speed);
+  	}
   },
 
   next: function(delay) {
@@ -171,9 +183,10 @@ Swipe.prototype = {
     clearTimeout(this.interval);
 	
 
-    if (this.index < this.length - 1) this.slide(this.index+1, this.speed); // if not last slide
-    else this.slide(0, this.speed); //if last slide return to start
-
+    if (this.index < this.real_length){
+    	
+    	this.slide(this.index+1, this.speed); // if not last slide
+    }
   },
 
   begin: function() {
@@ -216,7 +229,19 @@ Swipe.prototype = {
   transitionEnd: function(e) {
     
     if (this.delay) this.begin();
-
+	
+	//if on fake first slide for wrapping, swap back to the real first slide real quick
+    if(this.index >= this.real_length){
+    	
+    	this.slide(0,0);
+    }
+    
+    //if on fake last slide for wrapping, swap back to the real last slide real quick
+    if(this.index <= -1){
+    	
+    	this.slide(this.real_length-1,0);
+    }
+	
     this.callback(e, this.index, this.slides[this.index]);
 
   },
@@ -248,7 +273,19 @@ Swipe.prototype = {
   },
 
   onTouchMove: function(e) {
-
+	
+	//if on fake first slide for wrapping, swap back to the real first slide real quick
+    if(this.index >= this.real_length){
+    	
+    	this.index = 0;
+    } 
+	
+	//if on fake last slide for wrapping, swap back to the real last slide real quick
+    if(this.index <= -1){
+    	
+    	this.index = this.real_length-1;
+    }
+	
     // ensure swiping with one touch and not pinching
     if(e.touches.length > 1 || e.scale && e.scale !== 1) return;
 
@@ -279,7 +316,7 @@ Swipe.prototype = {
           : 1 );                                          // no resistance if false
       
       // translate immediately 1-to-1
-      this.element.style.webkitTransform = 'translate3d(' + (this.deltaX - this.index * this.width) + 'px,0,0)';
+      this.element.style.webkitTransform = 'translate3d(' + (this.deltaX - (this.index+1) * this.width) + 'px,0,0)';
 
     }
 

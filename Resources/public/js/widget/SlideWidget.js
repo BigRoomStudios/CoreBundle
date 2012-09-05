@@ -68,16 +68,8 @@ var SlideWidget = Class.create({
 		
 		var swiper = this.swiper;
 		
-		//console.log(swiper.index + ' ' + swiper.length);
+		swiper.next();
 		
-		if (swiper.index < swiper.length - 1){
-			
-			swiper.next();
-			
-		}else{
-			
-			swiper.goTo(0);
-		}
 	},
 	
 	slideBack: function(event){
@@ -95,14 +87,8 @@ var SlideWidget = Class.create({
 		
 		//console.log(swiper.index + ' ' + swiper.length);
 		
-		if (swiper.index > 0){
+		swiper.prev();
 			
-			swiper.prev();
-			
-		}else{
-			
-			swiper.goTo(swiper.length - 1);
-		}
 	},
 	
 	setIndicators: function(indicators_selector){
