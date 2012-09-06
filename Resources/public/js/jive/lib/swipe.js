@@ -62,9 +62,7 @@ Swipe.prototype = {
     
     // return immediately if their are less than two slides
     if (this.length < 2) return null;
-    
-    
-    
+   
     // determine width of each slide
     //this.width = this.container.getBoundingClientRect().width;
     this.width = $(this.container).width(); //sm - use jquery to get width for ie
@@ -77,6 +75,18 @@ Swipe.prototype = {
     // hide slider element but keep positioning during setup
     
     this.container.style.visibility = 'hidden';
+	
+	//fix styles to allow for jquery animation alternative
+	if ( ! Modernizr.csstransitions ) {
+	
+		$(this.element).parent().css('position', 'relative');
+		
+		$(this.element).css('position', 'absolute');
+		
+		$(this.element).css('left', '0px');
+		
+		$(this.element).find('li').css('float', 'left');
+	}
 	
 	//duplicate first slide append to end of slide show for wrapping:
 	$(this.element).append($(this.slides[0]).clone());
@@ -99,6 +109,8 @@ Swipe.prototype = {
       el.style.cssFloat = 'left';
       el.style.marginRight = this.margin + 'px';
       
+      
+      
       //el.style.display = 'table-cell';  //sm - removed, conflict in ie, specifed as floated block in css
       //el.style.verticalAlign = 'top';
     }
@@ -117,8 +129,11 @@ Swipe.prototype = {
 	
 	//console.log(index);
 	
+	// set new index to allow for expression arguments
+	this.index = index;
+
 	if ( Modernizr.csstransitions ) {
-		
+
 		// set duration speed (0 represents 1-to-1 scrolling)
 	    style.webkitTransitionDuration = style.MozTransitionDuration = style.msTransitionDuration = style.OTransitionDuration = style.transitionDuration = duration + 'ms';
 	
@@ -129,7 +144,11 @@ Swipe.prototype = {
 	}else{
 			
 		var real_this = this;
-				
+		
+		//$(this.element).css('left', ((index+1) * this.width) + 'px');
+		
+		
+		
 		$(this.element).animate({
 	        left: - ((index+1) * (this.width + this.margin))  //sm - requires the inner element to be position: relative
 	    }, {
@@ -141,9 +160,10 @@ Swipe.prototype = {
 	            real_this.transitionEnd(e);
 	        }
 	    });
+	   
 	}
     	
-    // set new index to allow for expression arguments
+    
     this.index = index;
 
   },
