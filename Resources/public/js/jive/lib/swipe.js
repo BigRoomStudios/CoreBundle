@@ -326,14 +326,16 @@ Swipe.prototype = {
       clearTimeout(this.interval);
 
       // increase resistance if first or last slide
-      this.deltaX = 
+      /*this.deltaX = 
         this.deltaX / 
           ( (!this.index && this.deltaX > 0               // if first slide and sliding left
             || this.index == this.length - 1              // or if last slide and sliding right
             && this.deltaX < 0                            // and if sliding at all
           ) ?                      
           ( Math.abs(this.deltaX) / this.width + 1 )      // determine resistance level
-          : 1 );                                          // no resistance if false
+          : 1 );*/                                          // no resistance if false
+      
+      this.deltaX = this.deltaX / 1;
       
       // translate immediately 1-to-1
       this.element.style.webkitTransform = 'translate3d(' + (this.deltaX - (this.index+1) * this.width) + 'px,0,0)';
