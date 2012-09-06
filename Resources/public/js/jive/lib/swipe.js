@@ -145,9 +145,6 @@ Swipe.prototype = {
 			
 		var real_this = this;
 		
-		//$(this.element).css('left', ((index+1) * this.width) + 'px');
-		
-		
 		
 		$(this.element).animate({
 	        left: - ((index+1) * (this.width + this.margin))  //sm - requires the inner element to be position: relative
@@ -159,13 +156,11 @@ Swipe.prototype = {
 	            // animation complete, fire the callback function
 	            real_this.transitionEnd(e);
 	        }
-	    });
-	   
+	    });  
 	}
-    	
-    
-    this.index = index;
-
+	
+	this.index = index;
+	
   },
 
   getPos: function() {
