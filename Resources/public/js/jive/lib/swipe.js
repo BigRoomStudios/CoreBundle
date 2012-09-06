@@ -350,18 +350,19 @@ Swipe.prototype = {
     var isValidSlide = 
           Number(new Date()) - this.start.time < 250      // if slide duration is less than 250ms
           && Math.abs(this.deltaX) > 20                   // and if slide amt is greater than 20px
-          || Math.abs(this.deltaX) > this.width/2,        // or if slide amt is greater than half the width
+          || Math.abs(this.deltaX) > this.width/2;        // or if slide amt is greater than half the width
 
     // determine if slide attempt is past start and end
-        isPastBounds = 
+    /*    isPastBounds = 
           !this.index && this.deltaX > 0                          // if first slide and slide amt is greater than 0
           || this.index == this.length - 1 && this.deltaX < 0;    // or if last slide and slide amt is less than 0
-
+	*/
+	
     // if not scrolling vertically
     if (!this.isScrolling) {
 
       // call slide function with slide end value based on isValidSlide and isPastBounds tests
-      this.slide( this.index + ( isValidSlide && !isPastBounds ? (this.deltaX < 0 ? 1 : -1) : 0 ), this.speed );
+      this.slide( this.index + ( isValidSlide ? (this.deltaX < 0 ? 1 : -1) : 0 ), this.speed );
 
     }
 
