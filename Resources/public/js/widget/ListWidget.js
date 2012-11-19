@@ -597,6 +597,28 @@ var ListWidget = Class.create({
 		}
 	},
 	
+	call: function(href, data, callback) {
+		
+		var $this = this;
+		
+		if(data == undefined){
+			
+			data = {}
+		}
+		
+		data.ajax = 1;
+		
+		$.getJSON(href, data, function(json) {
+				
+				if(callback){
+					
+					callback(json);
+				}
+			}
+		);
+		
+	},
+	
 	load: function(href, clear, callback) {
 		
 		//console.log(href);
