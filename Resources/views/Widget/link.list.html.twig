@@ -1,0 +1,44 @@
+{% extends 'BRSCoreBundle:Widget:list.html.twig' %}
+
+{% block list_actions %}
+
+
+<div class="input-append list-action">
+  <input class="input-small link-search" name="add_link_search" type="text" placeholder="{{ 'Add a Member' | trans }}" autocomplete="off" data-provide="typeahead" data-items="4" data-route="{{ path(route, { 'name':name, 'route':'search_link' }) }}">
+  <button class="btn btn-small btn-success link-add" name="add_link" data-route="{{ path(route, { 'name':name, 'route':'add_link' }) }}"><i class="icon-plus icon-white"></i> {{ 'Add' | trans }}</button>
+</div>
+
+<div class="btn-group list-action">
+	<button class="btn btn-small" name="select_all" data-route="{{ path(route, { 'name':name, 'route':'select_all' }) }}">{{ 'Select All' | trans }}</button>
+	<button class="btn btn-small" name="select_none" data-route="{{ path(route, { 'name':name, 'route':'select_none' }) }}">{{ 'Select None' | trans }}</button>
+</div>
+
+{% if reorder_field %}
+	<button class="btn btn-small list-action" data-route="{{ path(route, { 'name':name, 'route':'reorder' }) }}" name="reorder">{{ 'Set Display Order' | trans }}</button>
+{% endif %}
+
+<button class="btn btn-small btn-danger list-action" name="delete_selected" data-route="{{ path(route, { 'name':name, 'route':'delete_selected' }) }}"><i class="icon-remove icon-white"></i> {{ 'Remove' | trans }}</button>
+{% endblock %}
+
+{% block widget_js %}
+<script language="JavaScript">
+	
+	var list = new LinkListWidget({
+		name:'{{ name }}', 
+		route:'{{ route }}', 
+		action:'{{ path(route, { 'name':name, 'route':'' }) }}',
+		total: {{ total }},
+		page: {{ page }},
+		pages: {{ pages }},
+		page_size: {{ page_size }},
+	});
+	
+	{% if reordering %} 
+		
+		list.enable_reordering();
+		
+	{% endif %}
+	
+	
+</script>
+{% endblock %}
