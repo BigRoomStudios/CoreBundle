@@ -23,5 +23,6 @@ class SRCBundleCleanupCommand extends ContainerAwareCommand
 			
 		passthru("find . -name '*.DS_Store' -type f -delete");
 		passthru("find . -name '._*' -type f -delete");
+		passthru("find . -name '*~' -type f -delete");
 	}
 }
