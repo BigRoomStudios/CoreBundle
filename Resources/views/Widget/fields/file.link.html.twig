@@ -1,0 +1,1 @@
+<a class="{{ field.class }}{% if item.is_dir %} folder-link{% endif %}" {% if item.is_dir %}href="{{ path("brs_file_fileadmin_list", {id: item.id}) }}" data-route="brs_file_fileadmin_list"{% else %}href="{{ path("brs_file_file_download", {id: item.id}) }}{% endif %}">{% if field.label is defined %}{{ field.label | trans }}{% else %}{{ item[key] }}{% endif %}</a>

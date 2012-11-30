@@ -177,6 +177,7 @@ class Widget extends ContainerAware
 			'class' => $this->class,
 			'route' => $this->route_name,
 			'title' => $this->title,
+			'entity_id' => $this->entity_id,
 			'widget_class' => $this->getClassName(),
 			'widget_id' => $this->getWidgetID(),
 			'listeners' => $this->getListenerIds(),

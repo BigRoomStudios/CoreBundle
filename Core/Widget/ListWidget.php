@@ -3,7 +3,7 @@
 namespace BRS\CoreBundle\Core\Widget;
 
 use BRS\CoreBundle\Core\EntityLister;
-use BRS\CoreBundle\Core\Utility;
+use BRS\CoreBundle\Core\Utility as BRS;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\EventDispatcher\Event;
@@ -317,6 +317,8 @@ class ListWidget extends FormWidget
 		$count = $lister->getCount();
 		
 		$list = $this->getList();
+		
+		//BRS::die_pre($list);
 		
 		$page = $this->sessionGet('page');
 		
