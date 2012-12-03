@@ -302,9 +302,31 @@ class EntityLister
 		
 		$query = $this->buildDeleteQuery();
 		
-		$result = $query->getResult();
+		$em = $this->em;
 		
-		return $result;
+		$batchSize = 100;
+		$i = 0;
+		
+		$iterableResult = $query->iterate();
+		while (($row = $iterableResult->next()) !== false) {
+		    	
+			$item = $row[0];
+			
+			$item->setEntityManager($this->em);
+			
+		    $em->remove($item);
+			
+		    if (($i % $batchSize) == 0) {
+		        $em->flush(); // Executes all deletions.
+		        $em->clear(); // Detaches all objects from Doctrine!
+		    }
+		    ++$i;
+		}
+		
+		$em->flush();
+		$em->clear();
+		
+		return $i;
 	}
 	
 	/**
@@ -551,7 +573,10 @@ class EntityLister
 		
 		$qb = $this->em->createQueryBuilder();
 		
-		$qb->delete($this->entity_name . ' ' . $alias);
+		//$qb->delete($this->entity_name . ' ' . $alias);
+		
+		$qb->add('select', $alias)
+		   ->add('from', $this->entity_name . ' ' . $alias);
 		
 		$qb = $this->addFieldFilters($qb);
 		$qb = $this->addFilters($qb);
