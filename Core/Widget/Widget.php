@@ -206,7 +206,7 @@ class Widget extends ContainerAware
 	}
 	
 	/**
-	 * Displays a form to create a new entity for this admin module
+	 * Render this widget and return as plain html or html wrapped in json
 	 *
 	 * @Route("/render")
 	 */
@@ -255,14 +255,19 @@ class Widget extends ContainerAware
 			
 			unset($params[0]);
 			
+			
+			/*
+			Utility::die_pre($params);
+			
 			$param_array = array();
 				
 			foreach($params as $key => $param){
 				
 				$param_array = '$param[' . $key . ']';
 			}
+			*/
 			
-			$param_string = implode(', ', $param_array);
+			$param_string = implode(', ', $params);
 			
 			$action = Utility::to_camel_case($action);
 			
