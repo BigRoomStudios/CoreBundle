@@ -175,6 +175,13 @@ class WidgetController extends Controller
 		}
 	}
 	
+	public function getEntityManager(){
+		
+		$em = $this->getDoctrine()->getEntityManager();
+		
+		return $em;
+	}
+	
 	protected function isAjax(){
 		
 		$request = $this->getRequest();

@@ -46,6 +46,8 @@ class Widget extends ContainerAware
 	
 	protected $dispatcher;
 	
+
+	
 	public function __construct($entity_name = null)
 	{
 		$this->setEntityName($entity_name);
@@ -83,6 +85,16 @@ class Widget extends ContainerAware
 	public function getName()
 	{
 		return $this->name;
+	}
+	
+	public function setClass($class)
+	{
+		$this->class = $class;
+	}
+
+	public function getClass()
+	{
+		return $this->class;
 	}
 	
 	protected function addWidget($widget, $name){
