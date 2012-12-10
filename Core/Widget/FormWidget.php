@@ -91,6 +91,11 @@ class FormWidget extends Widget
 				
 				$options = array();
 				
+				if(isset($field['options'])){
+					
+					$options = $field['options'];
+				}
+				
 				if(isset($field['required'])){
 					
 					$options['required'] = $field['required'];
@@ -104,6 +109,11 @@ class FormWidget extends Widget
 					
 					$options['attr'] = $field['attr'];
 				}	
+				
+				if(isset($field['choices'])){
+					
+					$options['choices'] = $field['choices'];
+				}
 				
 				$builder->add($field_name,$type,$options);
 			}
