@@ -115,7 +115,22 @@ class FormWidget extends Widget
 					$options['choices'] = $field['choices'];
 				}
 				
-				$builder->add($field_name,$type,$options);
+				
+				$allowed = true;
+				
+				if(isset($field['allow'])){
+					
+					if (false === $this->get('security.context')->isGranted($field['allow'])) {
+							
+						$allowed = false;
+					}
+					
+				}
+				
+				if($allowed){
+					
+					$builder->add($field_name,$type,$options);
+				}
 			}
 		}		
 	}

@@ -1,5 +1,9 @@
 
 
 {% for key, field in fields %}
-	{% include 'BRSCoreBundle:Widget:form/field.html.twig' %}
+	
+	{% if not field.allow or is_granted(field.allow) %}
+		{% include 'BRSCoreBundle:Widget:form/field.html.twig' %}
+	{% endif %}
+	
 {% endfor %}

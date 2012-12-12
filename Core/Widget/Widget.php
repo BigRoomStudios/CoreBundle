@@ -557,4 +557,13 @@ class Widget extends ContainerAware
 		return new Response(json_encode($values));
 	}
 	
+	protected function getUser(){
+		
+		$securityContext = $this->get('security.context');
+		$token = $securityContext->getToken();
+		$user = $token->getUser();
+		
+		return $user;
+	}
+	
 }

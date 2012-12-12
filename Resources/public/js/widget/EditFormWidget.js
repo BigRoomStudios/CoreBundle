@@ -74,7 +74,10 @@ var EditFormWidget = Class.create({
 		    		// redirect me to the success route
 		    		if(data.redirect && data.redirect.url && data.redirect.route){
 		    			
-		    			$j.nav.go(data.redirect.route, data.redirect.url);
+		    			if($j.nav){
+		    			
+		    				$j.nav.go(data.redirect.route, data.redirect.url);
+		    			}
 		    		}
 		    		
 		    	} else {
