@@ -203,7 +203,7 @@ var ListWidget = Class.create({
 		
 		for(var i = 1; i <= this.config.pages; i++){
 			
-			var link = '<a class="page" href="?list[page]=' + i + '">' + i + '</a> ';
+			var link = '<a class="page" href="?' + this.widget_name + '[page]=' + i + '">' + i + '</a> ';
 			 
 			$page_links.append(link);
 			
@@ -490,6 +490,8 @@ var ListWidget = Class.create({
 	
 	load_visible_pages: function(){
 		
+		console.log('scroll2');
+		
 		var $this = this;
 		
 		var top = 0;
@@ -498,7 +500,7 @@ var ListWidget = Class.create({
 		
 		//alert(bottom);
 		
-		$pages = $row_container.find('.page');
+		var $pages = this.$row_container.find('.page');
 		
 		var scrolled_page = false;
 		
