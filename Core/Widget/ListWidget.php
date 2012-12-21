@@ -371,6 +371,8 @@ class ListWidget extends FormWidget
 			
 			$get = $request->query->get($this->getName());
 			
+			//die($this->getName() . ' here');
+			
 			if(isset($get['order'])){
 				
 				$this->sessionSet('order', $get['order']);
@@ -380,6 +382,9 @@ class ListWidget extends FormWidget
 			if(isset($get['page'])){
 			
 				$this->sessionSet('page', $get['page']);
+				
+				
+				
 				$this->reorderingOff();
 			}
 			

@@ -91,6 +91,11 @@ class FormWidget extends Widget
 				
 				$options = array();
 				
+				if(isset($field['options'])){
+					
+					$options = $field['options'];
+				}
+				
 				if(isset($field['required'])){
 					
 					$options['required'] = $field['required'];
@@ -105,7 +110,27 @@ class FormWidget extends Widget
 					$options['attr'] = $field['attr'];
 				}	
 				
-				$builder->add($field_name,$type,$options);
+				if(isset($field['choices'])){
+					
+					$options['choices'] = $field['choices'];
+				}
+				
+				
+				$allowed = true;
+				
+				if(isset($field['allow'])){
+					
+					if (false === $this->get('security.context')->isGranted($field['allow'])) {
+							
+						$allowed = false;
+					}
+					
+				}
+				
+				if($allowed){
+					
+					$builder->add($field_name,$type,$options);
+				}
 			}
 		}		
 	}
