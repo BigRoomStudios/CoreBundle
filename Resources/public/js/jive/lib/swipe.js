@@ -47,7 +47,7 @@ window.Swipe = function(element, options) {
     this.element.addEventListener('msTransitionEnd', this, false);
     this.element.addEventListener('oTransitionEnd', this, false);
     this.element.addEventListener('transitionend', this, false);
-    //window.addEventListener('resize', this, false);
+    window.addEventListener('resize', this, false);
   }
 
 };
@@ -85,7 +85,7 @@ Swipe.prototype = {
 		
 		$(this.element).css('left', '0px');
 		
-		$(this.element).find('li').css('float', 'left');
+		$(this.element).children().css('float', 'left');
 	}
 	
 	//duplicate first slide append to end of slide show for wrapping:
@@ -99,22 +99,9 @@ Swipe.prototype = {
 	this.length += 2;
 	
     // dynamic css
-    this.element.style.width = (this.slides.length * (this.width + this.margin)) + 'px';
-    
-    var index = this.slides.length;
-    while (index--) {
-      var el = this.slides[index];
-     
-      el.style.width = this.width + 'px';
-      el.style.cssFloat = 'left';
-      el.style.marginRight = this.margin + 'px';
-      
-      
-      
-      //el.style.display = 'table-cell';  //sm - removed, conflict in ie, specifed as floated block in css
-      //el.style.verticalAlign = 'top';
-    }
-
+   
+	this.resise();
+	
     // set start position and force translate to remove initial flickering
     this.slide(this.index, 0); 
 
@@ -122,7 +109,28 @@ Swipe.prototype = {
     this.container.style.visibility = 'visible';
 	
   },
-
+	
+  resise: function(){
+  	
+  	this.width = $(this.container).width(); //sm - use jquery to get width for ie
+  	
+  	this.element.style.width = (this.slides.length * (this.width + this.margin)) + 'px';
+    
+    var index = this.slides.length;
+    
+    while (index--) {
+    	
+      var el = this.slides[index];
+     
+      el.style.width = this.width + 'px';
+      el.style.cssFloat = 'left';
+      el.style.marginRight = this.margin + 'px';
+    }
+    
+    this.slide(this.index, 0);
+  	
+  },
+  
   slide: function(index, duration) {
 	
     var style = this.element.style;
@@ -237,7 +245,7 @@ Swipe.prototype = {
       case 'msTransitionEnd':
       case 'oTransitionEnd':
       case 'transitionend': this.transitionEnd(e); break;
-      //case 'resize': this.setup(); break;
+      case 'resize': this.resise(); break;
     }
   },
 
@@ -256,6 +264,10 @@ Swipe.prototype = {
     	
     	this.slide(this.real_length-1,0);
     }
+    
+    $(this.element).children().removeClass('current');
+    
+    $(this.slides[this.index+1]).addClass('current');
 	
     this.callback(e, this.index, this.slides[this.index]);
 
@@ -305,17 +317,18 @@ Swipe.prototype = {
     if(e.touches.length > 1 || e.scale && e.scale !== 1) return;
 
     this.deltaX = e.touches[0].pageX - this.start.pageX;
-
+	this.deltaY = e.touches[0].pageY - this.start.pageY;
+	
     // determine if scrolling test has run - one time test
     if ( typeof this.isScrolling == 'undefined') {
       this.isScrolling = !!( this.isScrolling || Math.abs(this.deltaX) < Math.abs(e.touches[0].pageY - this.start.pageY) );
     }
 
     // if user is not trying to scroll vertically
-    if (!this.isScrolling) {
+    //if (!this.isScrolling) {
 
       // prevent native scrolling 
-      e.preventDefault();
+      //e.preventDefault();
 
       // cancel slideshow
       clearTimeout(this.interval);
@@ -335,7 +348,9 @@ Swipe.prototype = {
       // translate immediately 1-to-1
       this.element.style.webkitTransform = 'translate3d(' + (this.deltaX - (this.index+1) * this.width) + 'px,0,0)';
 
-    }
+
+
+    //}
 
   },
 
@@ -345,7 +360,7 @@ Swipe.prototype = {
     var isValidSlide = 
           Number(new Date()) - this.start.time < 250      // if slide duration is less than 250ms
           && Math.abs(this.deltaX) > 20                   // and if slide amt is greater than 20px
-          || Math.abs(this.deltaX) > this.width/2;        // or if slide amt is greater than half the width
+          || Math.abs(this.deltaX) > this.width/3;        // or if slide amt is greater than 1/3 the width
 
     // determine if slide attempt is past start and end
     /*    isPastBounds = 
@@ -354,12 +369,12 @@ Swipe.prototype = {
 	*/
 	
     // if not scrolling vertically
-    if (!this.isScrolling) {
+    //if (!this.isScrolling) {
 
       // call slide function with slide end value based on isValidSlide and isPastBounds tests
       this.slide( this.index + ( isValidSlide ? (this.deltaX < 0 ? 1 : -1) : 0 ), this.speed );
 
-    }
+    //}
 
   }
 

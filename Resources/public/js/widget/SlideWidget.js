@@ -1,64 +1,83 @@
-
 var SlideWidget = Class.create({
-
+	
 	initialize: function(config) {
-		
+			
 		var $this = this;
 		
 		this.config = config;
 		
-		this.id = config.id;
+		this.supports_history = ( window.history && history.pushState ? true : false ); 
 		
-		this.container = $('#' + this.id);
+		this.container = $(config.container);
 		
-		this.element = this.container.get(0);
-		
-		this.swiper = new Swipe(this.element,{
+		this.swipe = new Swipe(this.container.get(0),{
 			startSlide: config.startSlide,
 			speed: config.speed,
 			auto: config.auto,
 			margin: config.margin,
-			callback: function(event, index, element){
-				$this.onSlideComplete(event, index, element);
-				if(config.callback){
-			
-					config.callback(event, index, element);
-				}
+			callback: function(event, index, elem) {
+				
+				$this.onSlideComplete(event, index, elem);
 			}
 		});
 		
-		$j.widgets[this.id] = this;
+		$j.widgets[config.container] = this;
 		
-		this.next_btn = this.container.find('.slide-next');
-		this.back_btn = this.container.find('.slide-back');
+		this.swipe.stop();
 		
-		this.next_btn.on('click', function(event){$this.slideNext(event)});
-		this.next_btn.on('touchstart', function(event){$this.slideNext(event)});
+		$(function(){
+			
+			$this.updateSlideIndicators();
+		});
 		
-		this.back_btn.on('click', function(event){$this.slideBack(event)});
-		this.back_btn.on('touchstart', function(event){$this.slideBack(event)});
+		$(config.container + ' .slide-next').live('click', function(event){$this.slideNext(event)});
+		$(config.container + ' .slide-next').live('touchstart', function(event){$this.slideNext(event)});
+		
+		$(config.container + ' .slide-back').live('click', function(event){$this.slideBack(event)});
+		$(config.container + ' .slide-back').live('touchstart', function(event){$this.slideBack(event)});
+		
+		$(config.container + ' .slide-indicators a').live('click', function(event){
+	
+			//this is the element clicked:
+			
+			$this.indicatorClick(event, this);
+		});
 		
 	},
 	
 	start: function(){
 		
-		this.swiper.resume();
+		this.swipe.resume();
 	},
 	
 	stop: function(){
 		
-		this.swiper.stop();
+		this.swipe.stop();
 	},
 	
-	onSlideComplete: function(event, index, element){
+	indicatorClick: function(event, elem){
 		
-		this.updateIndicators();
+		event.preventDefault();
+			
+		var key = $(elem).html();
+		
+		this.swipe.goTo(key-1);
+	},
+	
+	onSlideComplete: function(event, index, elem){
+		
+		if(this.config.callback){
+					
+			this.config.callback(event, index, elem);
+		}
+			
+		this.updateSlideIndicators();
 	},
 	
 	slideNext: function(event){
-	
-		event.preventDefault();
 		
+		event.preventDefault();
+	
 		var $target = $(event.target);
 		
 		if($target.hasClass('disabled')){
@@ -66,16 +85,16 @@ var SlideWidget = Class.create({
 			return false;
 		}
 		
-		var swiper = this.swiper;
+		var swiper = this.swipe;
 		
 		swiper.next();
-		
+	
 	},
 	
 	slideBack: function(event){
 		
 		event.preventDefault();
-		
+	
 		var $target = $(event.target);
 		
 		if($target.hasClass('disabled')){
@@ -83,55 +102,34 @@ var SlideWidget = Class.create({
 			return false;
 		}
 	
-		var swiper = this.swiper;
-		
-		//console.log(swiper.index + ' ' + swiper.length);
+		var swiper = this.swipe;
 		
 		swiper.prev();
-			
+		
 	},
 	
-	setIndicators: function(indicators_selector){
+	updateSlideIndicators: function(){
 		
-		var $this = this;
-		
-		this.indicators = $(indicators_selector);
-		
-		this.indicators.children().on('click', function(event){
-			
-			$this.swiper.goTo($(this).index());
-		})
-		
-		this.updateIndicators();
-	},
-	
-	updateIndicators: function(){
-	
 		var index = 0;
-		
-		var swiper = this.swiper;
+	
+		var swiper = this.swipe;
 		
 		if(swiper){
 			
 			index = swiper.index;
 		}
 		
-		if(this.indicators){
-			
-			var $indicators = this.indicators.children();
-			
-			$indicators.removeClass('selected');
-			
-			$($indicators[index]).addClass('selected');
-		}
+		var $indicators = $(this.config.container + ' .slide-indicators a');
 		
-		/*
+		$indicators.removeClass('selected');
 		
-		$back_link = this.back_btn;
+		$($indicators[index]).addClass('selected');
 		
-		$next_link = this.next_btn;
+		$back_link = $('#slide-back a');
 		
-		if(swiper && (swiper.index == 0)){
+		$next_link = $('#slide-next a');
+		
+		if(swiper && (swiper.index == 0) && $j.page_nav && (!$j.page_nav.get_prev_page())){
 			
 			$back_link.addClass('disabled');
 			
@@ -140,7 +138,7 @@ var SlideWidget = Class.create({
 			$back_link.removeClass('disabled');
 		}
 		
-		if(swiper && (swiper.index == swiper.length - 1)){
+		if(swiper && (swiper.index == swiper.length - 1) && $j.page_nav && (!$j.page_nav.get_next_page())){
 			
 			$next_link.addClass('disabled');
 			
@@ -148,10 +146,7 @@ var SlideWidget = Class.create({
 				
 			$next_link.removeClass('disabled');
 		}
-		
-		*/
 	}
 	
+	
 });
-
-
