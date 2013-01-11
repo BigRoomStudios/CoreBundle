@@ -3,7 +3,7 @@
 namespace BRS\CoreBundle\Core;
 
 use BRS\CoreBundle\Core\Utility as util;
-use Symfony\Bundle\DoctrineBundle\Registry;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 
 
 /**
@@ -301,6 +301,12 @@ class EntityLister
 	public function delete(){
 		
 		$query = $this->buildDeleteQuery();
+		
+		//print
+		//print_r(array(
+		//    'dql' => $query->getDQL(),
+		//    'parameters' => $query->getParameters(),
+		//));die();
 		
 		$em = $this->em;
 		

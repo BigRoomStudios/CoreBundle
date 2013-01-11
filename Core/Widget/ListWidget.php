@@ -358,7 +358,7 @@ class ListWidget extends FormWidget
 			'reordering' => $reordering,
 		);
 		
-		$vars = array_merge(parent::getVars(), $add_vars);
+		$vars = array_merge(parent::getVars($render), $add_vars);
 		
 		return $vars;
 	}
@@ -637,7 +637,7 @@ class ListWidget extends FormWidget
 				
 				//die(print_r($filters));
 				
-				$lister->setFilters(array_merge($current_filters, $filters));
+				$lister->setFilters($filters);
 				
 				$lister->delete();
 				

@@ -193,7 +193,7 @@ class FormWidget extends Widget
 		}
 	}
 	
-	public function getVars()
+	public function getVars($render = true)
 	{	
 		$success = $this->handleRequest();
 		
@@ -205,10 +205,16 @@ class FormWidget extends Widget
 				
 		$redirect = $this->getRedirect($success);
 		
+		$rendered = null;
+		
+		if($render){
+			$rendered = $form->createView();
+		}
+		
 		$add_vars = array(
 			'values' => $this->values,
 			'fields' => $this->fields,
-			'form' => $form->createView(),
+			'form' => $rendered,
 			'actions' => $actions,
 			'success' => $success,
 			'redirect' => $redirect,
@@ -217,6 +223,8 @@ class FormWidget extends Widget
 		);
 		
 		$vars = array_merge(parent::getVars(), $add_vars);
+		
+		//$vars = $add_vars;
 		
 		return $vars;
 	}
@@ -259,18 +267,16 @@ class FormWidget extends Widget
 			
 			$this->getById($id);
 		}
-				
-		$vars = $this->getVars();
 		
 		if($this->isAjax()){
 			
-			//$csrfToken = $this->get('form.csrf_provider')->generateCsrfToken('unknown');
-			
-			//$vars['csrf'] = $csrfToken;
+			$vars = $this->getVars(false);
 			
 			return $this->jsonResponse($vars);
 				
 		}else{
+			
+			$vars = $this->getVars();
 			
 			$view = $this->template;
 			

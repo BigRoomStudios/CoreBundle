@@ -207,7 +207,7 @@ class WidgetController extends Controller
 	    return $errors;
 	}
 	
-	protected function getUser(){
+	public function getUser(){
 		
 		$securityContext = $this->get('security.context');
 		$token = $securityContext->getToken();
