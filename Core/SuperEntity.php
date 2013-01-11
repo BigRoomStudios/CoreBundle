@@ -2,6 +2,12 @@
 
 namespace BRS\CoreBundle\Core;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/*
+ * @ORM\MappedSuperclass
+ * @ORM\HasLifecycleCallbacks()
+ */
 class SuperEntity
 {
 	
