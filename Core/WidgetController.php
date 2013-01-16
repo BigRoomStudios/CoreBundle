@@ -195,6 +195,16 @@ class WidgetController extends Controller
 	    }
 	}
 	
+	protected function getQuery($var){
+		
+		$request = $this->getRequest();
+		
+		if ($request->getMethod() == 'GET') {
+			
+			return $request->query->get($var);
+	    }
+	}
+	
 	protected function jsonResponse($values){
 		
 		return new Response(json_encode($values));

@@ -656,10 +656,10 @@ iScroll.prototype = {
 			deltaScale;
 
 		if ('wheelDeltaX' in e) {
-			wheelDeltaX = e.wheelDeltaX / 12;
-			wheelDeltaY = e.wheelDeltaY / 12;
+			wheelDeltaX = e.wheelDeltaX / 6;
+			wheelDeltaY = e.wheelDeltaY / 6;
 		} else if('wheelDelta' in e) {
-			wheelDeltaX = wheelDeltaY = e.wheelDelta / 12;
+			wheelDeltaX = wheelDeltaY = e.wheelDelta / 6;
 		} else if ('detail' in e) {
 			wheelDeltaX = wheelDeltaY = -e.detail * 3;
 		} else {

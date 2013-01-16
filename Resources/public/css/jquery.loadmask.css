@@ -1,0 +1,38 @@
+.loadmask {
+    z-index: 100;
+    position: absolute;
+    top:0;
+    left:0;
+    -moz-opacity: 0.5;
+    opacity: .50;
+    filter: alpha(opacity=50);
+    background-color: #000;
+    width: 100%;
+    height: 100%;
+    zoom: 1;
+}
+.loadmask-msg {
+    z-index: 20001;
+    position: absolute;
+    top: 0;
+    left: 0;
+  	background: none;
+}
+.loadmask-msg div {
+    color:#fff;
+    font-size: 0.8em;
+    cursor:wait;
+  	background: transparent url('../images/spinner.svg') no-repeat;
+    background-size: 50px 50px;
+    height: 50px;
+	width: 50px;
+}
+.masked {
+    overflow: hidden !important;
+}
+.masked-relative {
+    position: relative !important;
+}
+.masked-hidden {
+    visibility: hidden !important;
+}

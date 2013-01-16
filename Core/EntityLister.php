@@ -302,11 +302,11 @@ class EntityLister
 		
 		$query = $this->buildDeleteQuery();
 		
-		//print
-		//print_r(array(
-		//    'dql' => $query->getDQL(),
-		//    'parameters' => $query->getParameters(),
-		//));die();
+		/*
+		print_r(array(
+		    'dql' => $query->getDQL(),
+		    'parameters' => $query->getParameters(),
+		));die();*/
 		
 		$em = $this->em;
 		
@@ -315,7 +315,9 @@ class EntityLister
 		
 		$iterableResult = $query->iterate();
 		while (($row = $iterableResult->next()) !== false) {
-		    	
+		    
+			//die('here');
+			
 			$item = $row[0];
 			
 			$item->setEntityManager($this->em);

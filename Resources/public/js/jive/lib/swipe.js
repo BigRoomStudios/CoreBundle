@@ -86,6 +86,10 @@ Swipe.prototype = {
 		$(this.element).css('left', '0px');
 		
 		$(this.element).children().css('float', 'left');
+		
+		$(this.element).children().css('transition-timing-function', 'ease-out');
+		$(this.element).children().css('-webkit-transition-timing-function', 'ease-out');
+		$(this.element).children().css('-moz-transition-timing-function', 'ease-out');
 	}
 	
 	//duplicate first slide append to end of slide show for wrapping:
@@ -325,10 +329,10 @@ Swipe.prototype = {
     }
 
     // if user is not trying to scroll vertically
-    //if (!this.isScrolling) {
+    if (!this.isScrolling) {
 
       // prevent native scrolling 
-      //e.preventDefault();
+      e.preventDefault();
 
       // cancel slideshow
       clearTimeout(this.interval);
@@ -346,16 +350,18 @@ Swipe.prototype = {
       this.deltaX = this.deltaX / 1;
       
       // translate immediately 1-to-1
-      this.element.style.webkitTransform = 'translate3d(' + (this.deltaX - (this.index+1) * this.width) + 'px,0,0)';
+      this.element.style.webkitTransform = 'translate3d(' + (this.deltaX - (this.index+1) * (this.width + this.margin)) + 'px,0,0)';
 
 
 
-    //}
+    }
 
   },
 
   onTouchEnd: function(e) {
-
+	
+	//alert('here');
+	
     // determine if slide attempt triggers next/prev slide
     var isValidSlide = 
           Number(new Date()) - this.start.time < 250      // if slide duration is less than 250ms
@@ -369,12 +375,12 @@ Swipe.prototype = {
 	*/
 	
     // if not scrolling vertically
-    //if (!this.isScrolling) {
+    if (!this.isScrolling) {
 
       // call slide function with slide end value based on isValidSlide and isPastBounds tests
-      this.slide( this.index + ( isValidSlide ? (this.deltaX < 0 ? 1 : -1) : 0 ), this.speed );
+      this.slide( this.index + ( isValidSlide ? (this.deltaX < 0 ? 1 : -1) : 0 ), 200 );
 
-    //}
+    }
 
   }
 

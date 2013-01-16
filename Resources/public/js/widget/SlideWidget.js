@@ -30,18 +30,37 @@ var SlideWidget = Class.create({
 			$this.updateSlideIndicators();
 		});
 		
-		$(config.container + ' .slide-next').live('click', function(event){$this.slideNext(event)});
-		$(config.container + ' .slide-next').live('touchstart', function(event){$this.slideNext(event)});
+		this.controls_container = config.container;
 		
-		$(config.container + ' .slide-back').live('click', function(event){$this.slideBack(event)});
-		$(config.container + ' .slide-back').live('touchstart', function(event){$this.slideBack(event)});
-		
-		$(config.container + ' .slide-indicators a').live('click', function(event){
-	
-			//this is the element clicked:
+		if(config.controls_container){
 			
-			$this.indicatorClick(event, this);
-		});
+			this.controls_container = config.controls_container;
+		}
+		
+		if( Modernizr.touch ){
+			
+			$(this.controls_container + ' .slide-back').live('touchstart', function(event){$this.slideBack(event)});
+			$(this.controls_container + ' .slide-next').live('touchstart', function(event){$this.slideNext(event)});
+			
+			$(this.controls_container + ' .slide-indicators a').live('touchstart', function(event){
+	
+				//this is the element clicked:
+				$this.indicatorClick(event, this);
+			});
+			
+		}else{
+			
+			$(this.controls_container + ' .slide-next').live('click', function(event){$this.slideNext(event)});
+			$(this.controls_container + ' .slide-back').live('click', function(event){$this.slideBack(event)});	
+			
+			$(this.controls_container + ' .slide-indicators a').live('click', function(event){
+	
+				//this is the element clicked:
+				$this.indicatorClick(event, this);
+			});
+		}	
+		
+		
 		
 	},
 	
@@ -62,6 +81,11 @@ var SlideWidget = Class.create({
 		var key = $(elem).html();
 		
 		this.swipe.goTo(key-1);
+	},
+	
+	slideTo: function(key){
+		
+		this.swipe.goTo(key);
 	},
 	
 	onSlideComplete: function(event, index, elem){
@@ -119,7 +143,7 @@ var SlideWidget = Class.create({
 			index = swiper.index;
 		}
 		
-		var $indicators = $(this.config.container + ' .slide-indicators a');
+		var $indicators = $(this.controls_container + ' .slide-indicators a');
 		
 		$indicators.removeClass('selected');
 		
