@@ -41,10 +41,17 @@ var m = Math,
     hasTransitionEnd = prefixStyle('transition') in dummyStyle,
 
 	RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize',
-	START_EV = hasTouch ? 'touchstart' : 'mousedown',
-	MOVE_EV = hasTouch ? 'touchmove' : 'mousemove',
-	END_EV = hasTouch ? 'touchend' : 'mouseup',
-	CANCEL_EV = hasTouch ? 'touchcancel' : 'mouseup',
+	
+	//START_EV = hasTouch ? 'touchstart' : 'mousedown',
+	//MOVE_EV = hasTouch ? 'touchmove' : 'mousemove',
+	//END_EV = hasTouch ? 'touchend' : 'mouseup',
+	//CANCEL_EV = hasTouch ? 'touchcancel' : 'mouseup',
+	
+	START_EV = hasTouch ? 'touchstart' : '',
+	MOVE_EV = hasTouch ? 'touchmove' : '',
+	END_EV = hasTouch ? 'touchend' : '',
+	CANCEL_EV = hasTouch ? 'touchcancel' : '',
+	
 	TRNEND_EV = (function () {
 		if ( vendor === false ) return false;
 
@@ -201,13 +208,23 @@ iScroll.prototype = {
 	
 	handleEvent: function (e) {
 		var that = this;
+		
+		
+ 		
 		switch(e.type) {
 			case START_EV:
+			
+				if (   e.target.tagName == "SELECT" || e.target.tagName == "INPUT"
+					|| e.target.tagName == "BUTTON" || e.target.tagName == "TEXTAREA") {
+		 			return;
+		 		}
+		 		
 				if (!hasTouch && e.button !== 0) return;
 				that._start(e);
 				break;
 			case MOVE_EV: that._move(e); break;
 			case END_EV:
+				
 			case CANCEL_EV: that._end(e); break;
 			case RESIZE_EV: that._resize(); break;
 			case 'DOMMouseScroll': case 'mousewheel': that._wheel(e); break;
@@ -244,7 +261,8 @@ iScroll.prototype = {
 			if (that.options.scrollbarClass) bar.className = that.options.scrollbarClass + dir.toUpperCase();
 			else bar.style.cssText = 'position:absolute;z-index:100;' + (dir == 'h' ? 'height:7px;bottom:1px;left:2px;right:' + (that.vScrollbar ? '7' : '2') + 'px' : 'width:7px;bottom:' + (that.hScrollbar ? '7' : '2') + 'px;top:2px;right:1px');
 
-			bar.style.cssText += ';pointer-events:none;' + cssVendor + 'transition-property:opacity;' + cssVendor + 'transition-duration:' + (that.options.fadeScrollbar ? '350ms' : '0') + ';overflow:hidden;opacity:' + (that.options.hideScrollbar ? '0' : '1');
+			//bar.style.cssText += ';pointer-events:none;' + cssVendor + 'transition-property:opacity;' + cssVendor + 'transition-duration:' + (that.options.fadeScrollbar ? '350ms' : '0') + ';overflow:hidden;opacity:' + (that.options.hideScrollbar ? '0' : '1');
+			bar.style.cssText += ';' + cssVendor + 'transition-property:opacity;' + cssVendor + 'transition-duration:' + (that.options.fadeScrollbar ? '350ms' : '0') + ';overflow:hidden;opacity:' + (that.options.hideScrollbar ? '0' : '1');
 
 			that.wrapper.appendChild(bar);
 			that[dir + 'ScrollbarWrapper'] = bar;
@@ -254,11 +272,92 @@ iScroll.prototype = {
 			if (!that.options.scrollbarClass) {
 				bar.style.cssText = 'position:absolute;z-index:100;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.9);' + cssVendor + 'background-clip:padding-box;' + cssVendor + 'box-sizing:border-box;' + (dir == 'h' ? 'height:100%' : 'width:100%') + ';' + cssVendor + 'border-radius:3px;border-radius:3px';
 			}
-			bar.style.cssText += ';pointer-events:none;' + cssVendor + 'transition-property:' + cssVendor + 'transform;' + cssVendor + 'transition-timing-function:cubic-bezier(0.33,0.66,0.66,1);' + cssVendor + 'transition-duration:0;' + cssVendor + 'transform: translate(0,0)' + translateZ;
+			
+			//bar.style.cssText += ';pointer-events:none;' + cssVendor + 'transition-property:' + cssVendor + 'transform;' + cssVendor + 'transition-timing-function:cubic-bezier(0.33,0.66,0.66,1);' + cssVendor + 'transition-duration:0;' + cssVendor + 'transform: translate(0,0)' + translateZ;
+			bar.style.cssText += ';' + cssVendor + 'transition-property:' + cssVendor + 'transform;' + cssVendor + 'transition-timing-function:cubic-bezier(0.33,0.66,0.66,1);' + cssVendor + 'transition-duration:0;' + cssVendor + 'transform: translate(0,0)' + translateZ;
+			
 			if (that.options.useTransition) bar.style.cssText += ';' + cssVendor + 'transition-timing-function:cubic-bezier(0.33,0.66,0.66,1)';
 
 			that[dir + 'ScrollbarWrapper'].appendChild(bar);
 			that[dir + 'ScrollbarIndicator'] = bar;
+
+			//add dragging to scrollbar
+			$bar_wrapper = $(that[dir + 'ScrollbarWrapper']);
+
+			$bar = $(bar);
+			
+			$bar.on('mousedown', function(e){
+
+				that.scroll_dragging = true;
+
+				$bar.addClass('active');
+
+				$scroller = $(that.scroller);
+				
+				$scroller.css('-webkit-user-select', 'none');
+				$scroller.css('-moz-user-select', 'none');
+				$scroller.css('user-select', 'none');
+				
+				//$wrapper.disableSelection();
+
+				var offset = e.clientY - $bar.offset().top;
+
+				//console.log($bar.offset().top);
+
+				that.scrollbar_move = $(window).on('mousemove', function(e){
+
+					e.preventDefault();
+					e.stopPropagation();
+
+					//$wrapper.disableSelection();
+
+					var h = that.vScrollbarSize;
+					var h2 = $(that.scroller).height();
+					var y = e.clientY - offset;
+					var p = Math.round((y * h2) / h);
+
+					//console.log(y + ' : ' + p +  ' : ' + h);
+
+					if(y >= 0 && y <= (h - that.vScrollbarIndicatorSize)){
+
+						that._scrollbarPos(dir, false, y);
+
+						that._pos(0,0 - p);
+					}
+				});
+
+				that.scrollbar_end = $(window).on('mouseup', function(e){
+
+					e.preventDefault();
+					e.stopPropagation();
+					
+					that.scroll_dragging = false;
+					$bar.removeClass('active');
+
+					that.scrollbar_move.off();
+					that.scrollbar_end.off();
+					
+					$scroller.css('-webkit-user-select', '');
+					$scroller.css('-moz-user-select', '');
+					$scroller.css('user-select', '');
+					
+				});
+			})
+
+			/*$bar.draggable({
+				axis: "y", 
+				containment: $bar_wrapper, 
+				scroll: false,
+				start: function(e){
+
+					that.scroll_dragging = true;
+				},
+				stop: function(e){
+
+					that.scroll_dragging = false;
+				},
+			});*/
+    		
 		}
 
 		if (dir == 'h') {
@@ -285,11 +384,17 @@ iScroll.prototype = {
 	},
 	
 	_pos: function (x, y) {
+		
+		
+		
 		if (this.zoomed) return;
 
 		x = this.hScroll ? x : 0;
 		y = this.vScroll ? y : 0;
-
+		
+		x = m.round(x);
+		y = m.round(y);
+		
 		if (this.options.useTransform) {
 			this.scroller.style[transform] = 'translate(' + x + 'px,' + y + 'px) scale(' + this.scale + ')' + translateZ;
 		} else {
@@ -302,11 +407,13 @@ iScroll.prototype = {
 		this.x = x;
 		this.y = y;
 
-		this._scrollbarPos('h');
-		this._scrollbarPos('v');
+		if(!this.scroll_dragging){
+			this._scrollbarPos('h');
+			this._scrollbarPos('v');
+		}
 	},
 
-	_scrollbarPos: function (dir, hidden) {
+	_scrollbarPos: function (dir, hidden, position) {
 		var that = this,
 			pos = dir == 'h' ? that.x : that.y,
 			size;
@@ -314,6 +421,10 @@ iScroll.prototype = {
 		if (!that[dir + 'Scrollbar']) return;
 
 		pos = that[dir + 'ScrollbarProp'] * pos;
+
+		if(position){
+			pos = position;
+		}
 
 		if (pos < 0) {
 			if (!that.options.fixedScrollbar) {
@@ -332,7 +443,9 @@ iScroll.prototype = {
 				pos = that[dir + 'ScrollbarMaxScroll'];
 			}
 		}
-
+		
+		
+		
 		that[dir + 'ScrollbarWrapper'].style[transitionDelay] = '0';
 		that[dir + 'ScrollbarWrapper'].style.opacity = hidden && that.options.hideScrollbar ? '0' : '1';
 		that[dir + 'ScrollbarIndicator'].style[transform] = 'translate(' + (dir == 'h' ? pos + 'px,0)' : '0,' + pos + 'px)') + translateZ;
@@ -653,13 +766,16 @@ iScroll.prototype = {
 		var that = this,
 			wheelDeltaX, wheelDeltaY,
 			deltaX, deltaY,
-			deltaScale;
-
+			deltaScale,
+			wheelSpeed,
+		
+		wheelSpeed = 3;
+		
 		if ('wheelDeltaX' in e) {
-			wheelDeltaX = e.wheelDeltaX / 6;
-			wheelDeltaY = e.wheelDeltaY / 6;
+			wheelDeltaX = e.wheelDeltaX / wheelSpeed;
+			wheelDeltaY = e.wheelDeltaY / wheelSpeed;
 		} else if('wheelDelta' in e) {
-			wheelDeltaX = wheelDeltaY = e.wheelDelta / 6;
+			wheelDeltaX = wheelDeltaY = e.wheelDelta / wheelSpeed;
 		} else if ('detail' in e) {
 			wheelDeltaX = wheelDeltaY = -e.detail * 3;
 		} else {

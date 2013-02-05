@@ -1,5 +1,5 @@
 {% if field.type == 'group'%}
-	<div class="form-group wrapper">
+	<div class="form-group wrapper {{ field.class }}" id="form_group_{{ key }}">
 		{% include 'BRSCoreBundle:Widget:form/fields.html.twig' with {'fields' : field.fields} %}
 	</div>
 {% elseif field.type == 'hidden' %}

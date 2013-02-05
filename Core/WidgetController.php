@@ -205,6 +205,11 @@ class WidgetController extends Controller
 	    }
 	}
 	
+	protected function response($values){
+		
+		return new Response($values);
+	}
+	
 	protected function jsonResponse($values){
 		
 		return new Response(json_encode($values));
@@ -224,6 +229,11 @@ class WidgetController extends Controller
 		$user = $token->getUser();
 		
 		return $user;
+	}
+	
+	public function renderTemplate($template, $vars){
+		
+		return $this->container->get('templating')->render($template, $vars);
 	}
 	
 }
