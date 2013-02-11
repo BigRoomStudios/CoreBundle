@@ -292,11 +292,12 @@ iScroll.prototype = {
 
 				$bar.addClass('active');
 
-				$scroller = $(that.scroller);
+				$body = $('body');
 				
-				$scroller.css('-webkit-user-select', 'none');
-				$scroller.css('-moz-user-select', 'none');
-				$scroller.css('user-select', 'none');
+				$body.css('-webkit-user-select', 'none');
+				$body.css('-moz-user-select', 'none');
+				$body.css('user-select', 'none');
+				$body.css('cursor', 'default');
 				
 				//$wrapper.disableSelection();
 
@@ -337,10 +338,10 @@ iScroll.prototype = {
 					that.scrollbar_move.off();
 					that.scrollbar_end.off();
 					
-					$scroller.css('-webkit-user-select', '');
-					$scroller.css('-moz-user-select', '');
-					$scroller.css('user-select', '');
-					
+					$body.css('-webkit-user-select', '');
+					$body.css('-moz-user-select', '');
+					$body.css('user-select', '');
+					$body.css('cursor', '');
 				});
 			})
 
