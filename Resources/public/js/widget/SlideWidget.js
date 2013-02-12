@@ -101,7 +101,9 @@ var SlideWidget = Class.create({
 	slideNext: function(event){
 		
 		event.preventDefault();
-	
+		
+		//alert('slideNext');
+		
 		var $target = $(event.target);
 		
 		if($target.hasClass('disabled')){

@@ -236,4 +236,9 @@ class WidgetController extends Controller
 		return $this->container->get('templating')->render($template, $vars);
 	}
 	
+	public function getParameter($param){
+		
+		return $this->container->getParameter($param);	
+	}
+	
 }

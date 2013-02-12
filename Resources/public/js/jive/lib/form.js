@@ -13,7 +13,15 @@ var JiveForm = Class.create({
 		this.config = config;
 		
 		// form DOM
-		this.container = $("#"+config.container);
+		if(config.container){
+			
+			this.container = config.container
+		
+		}else if(config.container_id){
+			
+			this.container = $("#"+config.container);
+		}
+		
 		this.form_name = this.container.attr('name');
 		
 		// fields collector 
