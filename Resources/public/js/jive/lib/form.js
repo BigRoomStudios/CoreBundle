@@ -19,7 +19,7 @@ var JiveForm = Class.create({
 		
 		}else if(config.container_id){
 			
-			this.container = $("#"+config.container);
+			this.container = $("#"+config.container_id);
 		}
 		
 		this.form_name = this.container.attr('name');

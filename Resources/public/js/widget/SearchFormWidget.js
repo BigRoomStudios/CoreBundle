@@ -14,7 +14,7 @@ var SearchFormWidget = Class.create({
 		
 		this.container = $(this.id);
 		
-		config.container = config.id;
+		config.container = this.container;
 		
 		this.form = new JiveForm(config);
 			
