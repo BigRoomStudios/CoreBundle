@@ -770,7 +770,7 @@ iScroll.prototype = {
 			deltaScale,
 			wheelSpeed,
 		
-		wheelSpeed = 2;
+		wheelSpeed = 3;
 		
 		if ('wheelDeltaX' in e) {
 			wheelDeltaX = e.wheelDeltaX / wheelSpeed;
@@ -778,7 +778,7 @@ iScroll.prototype = {
 		} else if('wheelDelta' in e) {
 			wheelDeltaX = wheelDeltaY = e.wheelDelta / wheelSpeed;
 		} else if ('detail' in e) {
-			wheelDeltaX = wheelDeltaY = -e.detail * wheelSpeed * 7;
+			wheelDeltaX = wheelDeltaY = -e.detail * 15;
 		} else {
 			return;
 		}
