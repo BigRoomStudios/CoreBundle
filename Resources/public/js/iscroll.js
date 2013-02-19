@@ -95,7 +95,7 @@ var m = Math,
 		that.wrapper = typeof el == 'object' ? el : doc.getElementById(el);
 		that.wrapper.style.overflow = 'hidden';
 		that.scroller = that.wrapper.children[0];
-
+		that.scrolling = false;
 		// Default options
 		that.options = {
 			hScroll: true,
@@ -457,9 +457,11 @@ iScroll.prototype = {
 			point = hasTouch ? e.touches[0] : e,
 			matrix, x, y,
 			c1, c2;
-
+	
 		if (!that.enabled) return;
-
+		
+		that.scrolling = true;
+		
 		if (that.options.onBeforeScrollStart) that.options.onBeforeScrollStart.call(that, e);
 
 		if (that.options.useTransition || that.options.zoom) that._transitionTime(0);
@@ -623,9 +625,11 @@ iScroll.prototype = {
 		that._unbind(MOVE_EV, window);
 		that._unbind(END_EV, window);
 		that._unbind(CANCEL_EV, window);
-
+		
+		that.scrolling = false;
+		
 		if (that.options.onBeforeScrollEnd) that.options.onBeforeScrollEnd.call(that, e);
-
+		
 		if (that.zoomed) {
 			scale = that.scale * that.lastScale;
 			scale = Math.max(that.options.zoomMin, scale);
