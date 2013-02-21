@@ -95,7 +95,7 @@ var m = Math,
 		that.wrapper = typeof el == 'object' ? el : doc.getElementById(el);
 		that.wrapper.style.overflow = 'hidden';
 		that.scroller = that.wrapper.children[0];
-
+		that.scrolling = false;
 		// Default options
 		that.options = {
 			hScroll: true,
@@ -292,11 +292,12 @@ iScroll.prototype = {
 
 				$bar.addClass('active');
 
-				$scroller = $(that.scroller);
+				$body = $('body');
 				
-				$scroller.css('-webkit-user-select', 'none');
-				$scroller.css('-moz-user-select', 'none');
-				$scroller.css('user-select', 'none');
+				$body.css('-webkit-user-select', 'none');
+				$body.css('-moz-user-select', 'none');
+				$body.css('user-select', 'none');
+				$body.css('cursor', 'default');
 				
 				//$wrapper.disableSelection();
 
@@ -337,10 +338,10 @@ iScroll.prototype = {
 					that.scrollbar_move.off();
 					that.scrollbar_end.off();
 					
-					$scroller.css('-webkit-user-select', '');
-					$scroller.css('-moz-user-select', '');
-					$scroller.css('user-select', '');
-					
+					$body.css('-webkit-user-select', '');
+					$body.css('-moz-user-select', '');
+					$body.css('user-select', '');
+					$body.css('cursor', '');
 				});
 			})
 
@@ -456,9 +457,11 @@ iScroll.prototype = {
 			point = hasTouch ? e.touches[0] : e,
 			matrix, x, y,
 			c1, c2;
-
+	
 		if (!that.enabled) return;
-
+		
+		that.scrolling = true;
+		
 		if (that.options.onBeforeScrollStart) that.options.onBeforeScrollStart.call(that, e);
 
 		if (that.options.useTransition || that.options.zoom) that._transitionTime(0);
@@ -622,9 +625,11 @@ iScroll.prototype = {
 		that._unbind(MOVE_EV, window);
 		that._unbind(END_EV, window);
 		that._unbind(CANCEL_EV, window);
-
+		
+		that.scrolling = false;
+		
 		if (that.options.onBeforeScrollEnd) that.options.onBeforeScrollEnd.call(that, e);
-
+		
 		if (that.zoomed) {
 			scale = that.scale * that.lastScale;
 			scale = Math.max(that.options.zoomMin, scale);
@@ -777,7 +782,7 @@ iScroll.prototype = {
 		} else if('wheelDelta' in e) {
 			wheelDeltaX = wheelDeltaY = e.wheelDelta / wheelSpeed;
 		} else if ('detail' in e) {
-			wheelDeltaX = wheelDeltaY = -e.detail * 3;
+			wheelDeltaX = wheelDeltaY = -e.detail * 15;
 		} else {
 			return;
 		}

@@ -81,9 +81,13 @@ Swipe.prototype = {
 	
 		$(this.element).parent().css('position', 'relative');
 		
-		$(this.element).css('position', 'absolute');
+		var height = $(this.element).height();
+		
+		//$(this.element).css('position', 'absolute');
 		
 		$(this.element).css('left', '0px');
+		
+		//$(this.element).css('height', height + 'px');
 		
 		$(this.element).children().css('float', 'left');
 		
@@ -157,9 +161,11 @@ Swipe.prototype = {
 			
 		var real_this = this;
 		
+		var new_left =  0 - ((index+1) * (this.width + this.margin));
+		
 		
 		$(this.element).animate({
-	        left: - ((index+1) * (this.width + this.margin))  //sm - requires the inner element to be position: relative
+	        marginLeft: new_left  //sm - requires the inner element to be position: relative
 	    }, {
 	    	duration: duration,
 	    	easing: 'swing',
@@ -168,7 +174,7 @@ Swipe.prototype = {
 	            // animation complete, fire the callback function
 	            real_this.transitionEnd(e);
 	        }
-	    });  
+	    });
 	}
 	
 	this.index = index;
@@ -209,7 +215,6 @@ Swipe.prototype = {
     this.delay = delay || 0;
     clearTimeout(this.interval);
 	
-
     if (this.index < this.real_length){
     	
     	this.slide(this.index+1, this.speed); // if not last slide
