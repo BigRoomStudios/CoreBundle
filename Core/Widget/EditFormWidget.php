@@ -72,12 +72,12 @@ class EditFormWidget extends FormWidget
 	
 	public function handleRequest()
 	{
+		
 		$request = $this->getRequest();
 		
 		if ($request->getMethod() == 'POST') {
 			
 			$values = $request->get('form');
-			
 			
 			
 			$form =& $this->getForm();
@@ -90,11 +90,13 @@ class EditFormWidget extends FormWidget
 				
 				$entity->setValues($values);
 				
-				//Utility::die_pre((array)$entity);
+				$em =  $entity->getEntityManager();
 				
-				$em = $this->getDoctrine()->getEntityManager();
 			    $em->persist($entity);
-			    $em->flush();  
+			    
+			    //die();
+				
+			    $em->flush();
 				
 				$this->saveEvent($entity);
 				

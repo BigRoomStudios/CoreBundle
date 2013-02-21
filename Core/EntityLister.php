@@ -384,10 +384,19 @@ class EntityLister
 			
 			$field_alias = isset($field['alias']) ? $field['alias'] : $alias;
 			
+			if(isset($field['label'])){
+				$field_name = $field_alias . '.' . $field['label'];
+					
+				$pieces[$field_name] = $field_name;
+			}
+				
+			
 			$field_name = $field_alias . '.' . $key;
 			
 			$pieces[$field_name] = $field_name;
 		}
+		
+		//die(print_r($pieces));
 		
 		$dql = implode(', ', $pieces);
 		
@@ -473,7 +482,7 @@ class EntityLister
 		
 		$alias = $this->getEntityAlias();
 		
-		//util::die_pre($fields);
+		//util::die_pre($alias);
 		
 		$joins = $this->getJoins();
 		
@@ -547,26 +556,30 @@ class EntityLister
 		}
 		
 		$order_by = $this->getOrderBy();
+		$fields = $this->getListFields();
 		
-		if($order_by){
+		if(is_array($order_by))
+			foreach($order_by as $key => $direction){
+				$running_alias = $alias;
+				if(isset($fields[$key])){
 			
-			$fields = $this->getListFields();
-			
-			if(isset($fields[$order_by])){
-			
-				$order_field = $fields[$order_by];
+					$order_field = $fields[$key];
 				
-				if(isset($order_field['alias'])){
+					if(isset($order_field['alias'])){
 					
-					$alias = $order_field['alias'];
+						$running_alias = $order_field['alias'];
+					}
 				}
+				
+				$order_array[] = $running_alias . '.' . $key . ' ' . $direction;
 			}
-			
-			$qb->add('orderBy', $alias . '.' . $order_by);
-		}
+		
+		
+		if(isset($order_array) && is_array($order_array))
+			$qb->add('orderBy', implode(', ', $order_array));
 		
 		$this->query = $qb->getQuery();
-		  
+		
 		return $this->query;
 	}
 	

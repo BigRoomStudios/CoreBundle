@@ -88,12 +88,18 @@ class FormWidget extends Widget
 				$this->buildFormFields($builder, $field['fields']);
 				
 			}else{
-				
+				$order_by = false;
 				$options = array();
 				
 				if(isset($field['options'])){
 					
 					$options = $field['options'];
+					
+					// This isn't currently used.  Want to use this to order listed items in form...  Some day.
+					if(isset($field['options']['order_by'])){
+						$order_by = $field['options']['order_by'];
+						unset($field['options']['order_by']);
+					}
 				}
 				
 				if(isset($field['required'])){
@@ -128,7 +134,6 @@ class FormWidget extends Widget
 				}
 				
 				if($allowed){
-					
 					$builder->add($field_name,$type,$options);
 				}
 			}
@@ -157,9 +162,7 @@ class FormWidget extends Widget
 	}
 	
 	public function getById($id){
-		
-		//die($id);
-		
+
 		$this->entity_id = $id;
 		
 		$entity = $this->getRepository()->find($id);

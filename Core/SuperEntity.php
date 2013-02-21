@@ -3,6 +3,7 @@
 namespace BRS\CoreBundle\Core;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Util\Debug;
 
 /*
  * @ORM\MappedSuperclass
@@ -20,22 +21,31 @@ class SuperEntity
 	
 	public function getEntityManager(){
 		
-		$this->em = $em;
+		return $this->em;
 	}
 		
 	public function setValues($values){
 		
-		foreach($values as $key => $value){
-					
+		foreach($values as $key => $value)
 			$this->setValue($key, $value);
-		}	
+		
 	}
 	
 	public function setValue($key, $value){
 		
-		if(property_exists($this, $key)){
-				
+		$setter = Utility::to_camel_case('set_'.$key);
+		
+		
+		
+		if(method_exists($this, $setter)){
+			//Debug::dump('<pre>'.get_class($this).'->'.$setter.'('.gettype($value).' '. (string) $value.')</pre>');
+			$this->$setter($value);
+		}
+		
+		elseif(property_exists($this, $key)){
+			//Debug::dump('<pre>'.get_class($this).'->'.$setter.' = '.gettype($value).' '. (string) $value.'</pre>');
 			$this->$key = $value;
 		}
+		
 	}
 }

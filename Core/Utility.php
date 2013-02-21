@@ -10,19 +10,55 @@ use Symfony\Component\Form\Form;
  */
 class Utility
 {
-	static function die_pre($value)
+	static function die_pre($value, $max = 2)
 	{	
-		Utility::print_pre($value);
+		Utility::print_pre($value, $max);
 		die();
 	}
 	
-	static function print_pre($value)
+	static function print_pre($value, $max = 2)
 	{
+		if(is_array($value) || is_object($value))
+			$value = self::toArray($value, $max);
+		
 		print('<pre>');
 		
 		print_r($value);
 		
 		print('</pre>');
+	}
+	
+	static function die_dump($value)
+	{
+		Utility::pre_dump($value);
+		die();
+	}
+	
+	static function pre_dump($value)
+	{
+		print('<pre>');
+	
+		var_dump($value);
+	
+		print('</pre>');
+	}
+	
+	static function toArray($object, $max = 2, $current = 0)
+	{
+		if($current > $max)
+			return ucfirst(gettype($object)).'( ... )';
+		
+		$current++;
+		$return = array();
+		foreach((array) $object as $key => $data)
+			if (is_object($data))
+				$return[$key] = self::toArray($data, $max, $current);
+			elseif (is_array($data))
+				$return[$key] = self::toArray($data, $max, $current);
+			else
+				$return[$key] = $data;
+			
+		return $return;
 	}
 	
 	/**

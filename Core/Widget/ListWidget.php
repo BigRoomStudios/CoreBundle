@@ -500,10 +500,13 @@ class ListWidget extends FormWidget
 				
 				foreach ($repo->findById($order) as $obj) {
 					
+					
 					$obj->setDisplayOrder(array_search($obj->getId(), $order));
+					$obj->setEntityManager($em);
 				}
 				
 				$em->flush();
+				
 			}
 			
 			//return $this->rowsAction();

@@ -259,7 +259,9 @@ class Widget extends ContainerAware
 	
 	public function route($route)
 	{
-		$params = explode('/', $route);
+
+		$params = (preg_match('[\/]', $route) == 1) ? explode('/', $route) : array($route);
+		
 		
 		if($params){
 		
@@ -268,26 +270,21 @@ class Widget extends ContainerAware
 			unset($params[0]);
 			
 			
-			/*
-			Utility::die_pre($params);
+			/*Utility::die_pre($route);
 			
 			$param_array = array();
 				
 			foreach($params as $key => $param){
 				
 				$param_array = '$param[' . $key . ']';
-			}
-			*/
+			}*/
+			
 			
 			$param_string = implode(', ', $params);
 			
-			$action = Utility::to_camel_case($action);
+			$action = Utility::to_camel_case($action).'Action';
 			
-			$eval = '$return = $this->' . $action . 'Action(' . $param_string . ');';
-			
-			eval($eval);
-			
-			return $return;
+			return $this->$action($param_string);
 		}
 	}
 	
@@ -440,6 +437,7 @@ class Widget extends ContainerAware
      */
     public function getRequest()
     {
+    	//throw new \Exception ('test');
         return $this->container->get('request');
     }
 	
