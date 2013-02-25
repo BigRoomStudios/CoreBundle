@@ -257,34 +257,41 @@ class Widget extends ContainerAware
 		return $this->route_name;
 	}
 	
+	/**
+	 * Handles widget routing and calling of widget functions based on route.
+	 * Routes are interpreted after the base widget path:
+	 * 
+	 * * $this->addWidget($edit_widget, 'edit_member'); // resolves to:
+	 * * widget/edit_member/<route>  // Where <route> gets passed to this method.
+	 * 
+	 * All paths following 'edit_member/' (ie. 'post/2') are passed here as $route.
+	 * In the above example, this function calls $this->postAction(2)
+	 * 
+	 * This is infinate, and could be extended to:
+	 *  
+	 *  * post/a/b/c/d/ ...
+	 *  * $this->postAction('a','b','c','d', ...);
+	 *  * post/
+	 *  * $this->postAction();
+	 *  
+	 *  @author Mchael Mulligan <michael@bigroomstudios.com>
+	 *  
+	 *  @param string $route The current route following the active Widget URI
+	 *  @return mixed The result of call_user_func_array(array($this, $action), $params);
+	 */
 	public function route($route)
 	{
-
+		
+		if($route == false)
+			return;
+		
 		$params = (preg_match('[\/]', $route) == 1) ? explode('/', $route) : array($route);
 		
-		
 		if($params){
-		
-			$action = $params[0];
 			
-			unset($params[0]);
+			$action = Utility::to_camel_case(array_shift($params)).'Action';
 			
-			
-			/*Utility::die_pre($route);
-			
-			$param_array = array();
-				
-			foreach($params as $key => $param){
-				
-				$param_array = '$param[' . $key . ']';
-			}*/
-			
-			
-			$param_string = implode(', ', $params);
-			
-			$action = Utility::to_camel_case($action).'Action';
-			
-			return $this->$action($param_string);
+			return call_user_func_array(array($this, $action), $params);
 		}
 	}
 	
