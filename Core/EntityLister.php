@@ -172,7 +172,6 @@ class EntityLister
 		}
 		
 		$this->order_by = $order_by;
-		util::die_pre($this->order_by);
 	}
 	
 	/**
@@ -182,7 +181,7 @@ class EntityLister
      */
 	public function getOrderBy(){
 		
-		return (is_array($this->order_by)) ? $this->order_by : Array();
+		return $this->order_by;
 	}
 	
 	public function setJoins($joins){
