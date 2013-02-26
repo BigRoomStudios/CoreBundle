@@ -155,14 +155,24 @@ class EntityLister
 		return $this->filters;
 	}
 	
+	
 	/**
      * Sets list order
      *
-     * @param array  $order_by       An array of field definitions
+     * @param mixed  $order_by       A string|array to order the query by, stored as array
      */
 	public function setOrderBy($order_by){
 		
+		if(empty($order_by))
+			throw new \Exception('Method setOrderBy expects parameter 1 to be either a string or array.');
+		
+		if(is_string($order_by)) {
+			@list($field, $dir) = explode(' ', $order_by);
+			$order_by = array($field => ($dir === "ASC" || $dir === "DESC") ? $dir : "ASC");
+		}
+		
 		$this->order_by = $order_by;
+		util::die_pre($this->order_by);
 	}
 	
 	/**
@@ -172,7 +182,7 @@ class EntityLister
      */
 	public function getOrderBy(){
 		
-		return $this->order_by;
+		return (is_array($this->order_by)) ? $this->order_by : Array();
 	}
 	
 	public function setJoins($joins){
@@ -558,7 +568,7 @@ class EntityLister
 		$order_by = $this->getOrderBy();
 		$fields = $this->getListFields();
 		
-		if(is_array($order_by))
+		if(!empty($order_by))
 			foreach($order_by as $key => $direction){
 				$running_alias = $alias;
 				if(isset($fields[$key])){
