@@ -35,17 +35,10 @@ class SuperEntity
 		
 		$setter = Utility::to_camel_case('set_'.$key);
 		
-		
-		
-		if(method_exists($this, $setter)){
-			//Debug::dump('<pre>'.get_class($this).'->'.$setter.'('.gettype($value).' '. (string) $value.')</pre>');
+		if(method_exists($this, $setter))
 			$this->$setter($value);
-		}
-		
-		elseif(property_exists($this, $key)){
-			//Debug::dump('<pre>'.get_class($this).'->'.$setter.' = '.gettype($value).' '. (string) $value.'</pre>');
+		elseif(property_exists($this, $key))
 			$this->$key = $value;
-		}
 		
 	}
 }
