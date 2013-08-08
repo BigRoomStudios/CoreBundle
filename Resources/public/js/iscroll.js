@@ -460,6 +460,7 @@ iScroll.prototype = {
 		if (!that.enabled) return;
 		
 		that.scrolling = true;
+		that.hasScrolled = true;
 		
 		if (that.options.onBeforeScrollStart) that.options.onBeforeScrollStart.call(that, e);
 
@@ -774,6 +775,8 @@ iScroll.prototype = {
 			wheelSpeed,
 		
 		wheelSpeed = 3;
+		
+		that.hasScrolled = true;
 		
 		if ('wheelDeltaX' in e) {
 			wheelDeltaX = e.wheelDeltaX / wheelSpeed;
