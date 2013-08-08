@@ -182,11 +182,10 @@ var m = Math,
 
 		that._bind(RESIZE_EV, window);
 		that._bind(START_EV);
-		if (!hasTouch) {
-			if (that.options.wheelAction != 'none') {
-				that._bind('DOMMouseScroll');
-				that._bind('mousewheel');
-			}
+		
+		if (that.options.wheelAction != 'none') {
+			that._bind('DOMMouseScroll');
+			that._bind('mousewheel');
 		}
 
 		if (that.options.checkDOMChanges) that.checkDOMTime = setInterval(function () {
